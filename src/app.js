@@ -1,5 +1,5 @@
 
-var HelloWorldLayer = cc.Layer.extend({
+var HelloWorldLayer = GameLayerBase.extend({
     sprite:null,
     ctor:function () {
         //////////////////////////////
