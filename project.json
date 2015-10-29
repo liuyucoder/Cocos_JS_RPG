@@ -1,0 +1,28 @@
+{
+    "project_type": "javascript",
+
+    "debugMode" : 1,
+    "showFPS" : true,
+    "frameRate" : 60,
+    "id" : "gameCanvas",
+    "renderMode" : 0,
+    "engineDir":"frameworks/cocos2d-html5",
+
+    "modules" : ["cocos2d", "cocostudio"],
+
+    "jsList" : [
+        "src/resource.js",
+
+        "src/Commons/GameLog.js",
+        "src/Commons/GameMgr_ResCache.js",
+
+        "src/GameObjects/GameObjectBase.js",
+
+        "src/GameObjects/Characters/GameCharacterBase.js",
+        "src/GameObjects/Characters/GameCharacter_Test01.js",
+
+        "src/GameLayers/GameLayerBase.js",
+
+        "src/app.js"
+    ]
+}
