@@ -8,7 +8,11 @@ var res = {
     MainScene_json : "res/MainScene.json"
 };
 
-var resPlist = {
+var resCommon = {
+
+};
+
+var resPlist_Chars = {
     Char0001 : "res/Characters/1_4.plist",
     Char0002 : "res/Characters/Sh8.plist"
 };
