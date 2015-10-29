@@ -24,6 +24,10 @@ var HelloWorldScene = cc.Scene.extend({
         this._super();
         var layer = new HelloWorldLayer();
         this.addChild(layer);
+
+        var GameObj = new GameObjectBase();
+        GameObj.init();
+        this.addChild(GameObj);
     }
 });
 

@@ -28,8 +28,9 @@ var EGameObjectDirection = {
     EGOD_RightTop: 2,
     EGOD_Left: 3,
     EGOD_Right: 4,
-    EGOD_LeftDown: 5,
-    EGOD_RightDown: 6
+    EGOD_Down: 5,
+    EGOD_LeftDown: 6,
+    EGOD_RightDown: 7
 };
 
 
@@ -43,7 +44,7 @@ var GameObjectBase = cc.Node.extend({
     _eGameObjectType: EGameObjectType.EGOT_Unknown,
 
     //
-    _eGameObjectDirection: EGameObjectDirection.EGOD_Top,
+    _eGameObjectDirection: EGameObjectDirection.EGOD_Down,
     _eTeamNum: ETeamNum.ETT_Unknown,
     _bPlayer: false,
     _bNPC: false,
@@ -85,7 +86,7 @@ var GameObjectBase = cc.Node.extend({
     /**
      * GameObject Animation Begin
      */
-    _sAnimResPath: "",
+    _sAnimResPath: "1111",
 
     _initFrameAnimSeqs: function(){
         var self = this;
