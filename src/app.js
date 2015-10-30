@@ -25,7 +25,10 @@ var HelloWorldScene = cc.Scene.extend({
         var layer = new HelloWorldLayer();
         this.addChild(layer);
 
+        var size = cc.director.getWinSize();
         var GameObj = new GameObjectBase();
+        GameObj.x = size.width / 4;
+        GameObj.y = size.height / 4;
         GameObj.init();
         this.addChild(GameObj);
     }
