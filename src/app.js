@@ -26,7 +26,7 @@ var HelloWorldScene = cc.Scene.extend({
         this.addChild(layer);
 
         var size = cc.director.getWinSize();
-        var GameObj = new GameObjectBase();
+        var GameObj = new GameCharacter_Test01();
         GameObj.x = size.width / 4;
         GameObj.y = size.height / 4;
         GameObj.init();
