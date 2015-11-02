@@ -7,6 +7,8 @@ var res = {
     HelloWorld_png : "res/HelloWorld.png",
     Char0001_p : "res/Characters/1_4.plist",
     Char0001_t : "res/Characters/1_4.png",
+    Char0002_p : "res/Characters/Sh8.plist",
+    Char0002_t : "res/Characters/Sh8.png",
     MainScene_json : "res/MainScene.json"
 };
 
@@ -17,7 +19,8 @@ var resCommon = {
 var resPlist_Chars = {
     Char0001_p : "res/Characters/1_4.plist",
     Char0001_t : "res/Characters/1_4.png",
-    Char0002_p : "res/Characters/Sh8.plist"
+    Char0002_p : "res/Characters/Sh8.plist",
+    Char0002_t : "res/Characters/Sh8.png"
 };
 
 var g_resources = [];

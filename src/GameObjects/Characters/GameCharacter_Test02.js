@@ -1,20 +1,20 @@
 /**
- * Created by yu.liu on 2015/10/28.
+ * Created by yu.liu on 2015/11/2.
  */
 
-var GameCharacter_Test01 = CameCharacterBase.extend({
-    _className: "GameCharacter_Test01",
+var GameCharacter_Test02 = CameCharacterBase.extend({
+    _className: "GameCharacter_Test02",
 
     ctor:function(){
-        cc.spriteFrameCache.addSpriteFrames(resPlist_Chars.Char0001_p, resPlist_Chars.Char0001_t);
+        cc.spriteFrameCache.addSpriteFrames(resPlist_Chars.Char0002_p, resPlist_Chars.Char0002_t);
         this._super();
     },
 
     /**
-     * Animations Begin
+     * Animations
      */
-    _sAnimResPath: "res/Characters/1_4.plist",
-    _sAnimResName: "1_4",
+    _sAnimResPath: "res/Characters/Sh8.plist",
+    _sAnimResName: "Sh8",
     //Idle
     _frameNumIdle: 2,
     _animationTimeIdle: 1,
@@ -31,10 +31,13 @@ var GameCharacter_Test01 = CameCharacterBase.extend({
     _frameNumVictory: 5,
     _animationTimeVictory: 0.6,
 
+    _createFrameAnimSeqAttack2: function(){
+    },
+
     _finishFrameAnimSeqs: function(){
         this._super();
 
-        this._CurrentAction = cc.animate(this._AnimationsInfo[EGameObjectAnimIdx.EGOAI_Walk][EGameObjectDirection.EGOD_Top]);
+        this._CurrentAction = cc.animate(this._AnimationsInfo[EGameObjectAnimIdx.EGOAI_Walk][EGameObjectDirection.EGOD_Down]);
         if(this._CurrentAction != null && this._MyRootSprite != null)
             this._MyRootSprite.runAction(cc.repeatForever(this._CurrentAction));
     }

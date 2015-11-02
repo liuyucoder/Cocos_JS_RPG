@@ -20,8 +20,10 @@
 
         "src/GameObjects/Characters/GameCharacterBase.js",
         "src/GameObjects/Characters/GameCharacter_Test01.js",
+        "src/GameObjects/Characters/GameCharacter_Test02.js",
 
         "src/GameLayers/GameLayerBase.js",
+        "src/GameLayers/GameLayerInputBase.js",
 
         "src/app.js"
     ]

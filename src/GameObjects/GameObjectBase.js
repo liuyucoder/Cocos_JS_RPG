@@ -121,123 +121,9 @@ var GameObjectBase = cc.Node.extend({
 
     _finishFrameAnimSeqs: function(){
     },
-
-    _createFrameAnimSeq: function(AnimIdx, FrameNum, AnimTime, SpecialAnimBinding, bRestoreOriginalFrame){
-        var animationBinding = (SpecialAnimBinding == null ? [] : SpecialAnimBinding);
-        if(SpecialAnimBinding == null){
-            animationBinding[EGameObjectDirection.EGOD_Down] = EResDirectionId.ERDI_Down;
-            animationBinding[EGameObjectDirection.EGOD_RightDown] = EResDirectionId.ERDI_Down;
-            animationBinding[EGameObjectDirection.EGOD_Right] = EResDirectionId.ERDI_Right;
-            animationBinding[EGameObjectDirection.EGOD_RightTop] = EResDirectionId.ERDI_Top;
-            animationBinding[EGameObjectDirection.EGOD_Top] = EResDirectionId.ERDI_Top;
-            animationBinding[EGameObjectDirection.EGOD_LeftTop] = EResDirectionId.ERDI_Top;
-            animationBinding[EGameObjectDirection.EGOD_Left] = EResDirectionId.ERDI_Right;
-            animationBinding[EGameObjectDirection.EGOD_LeftDown] = EResDirectionId.ERDI_Down;
-        }
-        var animations = [];
-
-        for (var i in animationBinding) {
-            var animation = null;
-            for(var ii = 0; ii < i; ii++)
-            {
-                if(animationBinding[i] == animationBinding[ii])
-                {
-                    animation = animations[ii];
-                    break;
-                }
-            }
-
-            if(animation == null)
-            {
-                animation = new cc.Animation();
-                for(var j = 0; j < FrameNum; j++ )
-                {
-                    var frameName = this._sAnimResName + "_" + AnimIdx + "_" + animationBinding[i] + "_" + j + ".png";
-                    var spriteFrame = cc.spriteFrameCache.getSpriteFrame(frameName);
-                    if(spriteFrame == null)
-                    {
-                        GameLog.w("Cant get Sprite Frame by", frameName);
-                        continue;
-                    }
-                    animation.addSpriteFrame(spriteFrame);
-                }
-                animation.setDelayPerUnit(AnimTime / FrameNum);
-                animation.setRestoreOriginalFrame(bRestoreOriginalFrame == null ? true : bRestoreOriginalFrame);
-            }
-
-            animations.push(animation);
-        }
-
-        return animations;
-    },
-
-    _createFrameAnimSeqIdle: function(){
-        //GameLog.c("_createFrameAnimSeqIdle()");
-        var self = this;
-        //Idle
-        self._frameNumIdle = 2;
-        self._animationTimeIdle = 1;
-        self._AnimationsInfo[EGameObjectAnimIdx.EGOAI_Idle] = this._createFrameAnimSeq(EGameObjectAnimIdx.EGOAI_Idle,  self._frameNumIdle, self, self._animationTimeIdle);
-    },
-
-    _createFrameAnimSeqMove: function(){
-        //GameLog.c("_createFrameAnimSeqMove()");
-        var self = this;
-        //Idle
-        self._frameNumMove = 7;
-        self._animationTimeMove = 1;
-        self._AnimationsInfo[EGameObjectAnimIdx.EGOAI_Walk] = this._createFrameAnimSeq(EGameObjectAnimIdx.EGOAI_Walk,  self._frameNumMove, self, self._animationTimeMove);
-    },
-
-    _createFrameAnimSeqRoadieRun: function(){
-    },
-
-    _createFrameAnimSeqDeath: function(){
-    },
-
-    _createFrameAnimSeqAttack1: function(){
-        //GameLog.c("_createFrameAnimSeqAttack1()");
-        var self = this;
-        //Idle
-        self._frameNumAttack1 = 6;
-        self._animationTimeAttack1 = 0.8;
-        self._AnimationsInfo[EGameObjectAnimIdx.EGOAI_Attack1] = this._createFrameAnimSeq(EGameObjectAnimIdx.EGOAI_Attack1,  self._frameNumAttack1, self._animationTimeAttack1);
-    },
-
-    _createFrameAnimSeqAttack2: function(){
-        //GameLog.c("_createFrameAnimSeqAttack2()");
-        var self = this;
-        //Idle
-        self._frameNumAttack2 = 6;
-        self._animationTimeAttack2 = 0.8;
-        self._AnimationsInfo[EGameObjectAnimIdx.EGOAI_Attack2] = this._createFrameAnimSeq(EGameObjectAnimIdx.EGOAI_Attack2,  self._frameNumAttack2, self._animationTimeAttack2);
-    },
-
-    _createFrameAnimSeqVictory: function()
-    {
-        //GameLog.c("_createFrameAnimSeqVictory()");
-        var self = this;
-        //Idle
-        self._frameNumVictory = 5;
-        self._animationTimeVictory = 0.6;
-
-        var animationBinding = [];
-        animationBinding[EGameObjectDirection.EGOD_Down] = EResDirectionId.ERDI_Down;
-        animationBinding[EGameObjectDirection.EGOD_RightDown] = EResDirectionId.ERDI_Down;
-        animationBinding[EGameObjectDirection.EGOD_Right] = EResDirectionId.ERDI_Down;
-        animationBinding[EGameObjectDirection.EGOD_RightTop] = EResDirectionId.ERDI_Down;
-        animationBinding[EGameObjectDirection.EGOD_Top] = EResDirectionId.ERDI_Down;
-        animationBinding[EGameObjectDirection.EGOD_LeftTop] = EResDirectionId.ERDI_Down;
-        animationBinding[EGameObjectDirection.EGOD_Left] = EResDirectionId.ERDI_Down;
-        animationBinding[EGameObjectDirection.EGOD_LeftDown] = EResDirectionId.ERDI_Down;
-
-        self._AnimationsInfo[EGameObjectAnimIdx.EGOAI_Victory] = this._createFrameAnimSeq(EGameObjectAnimIdx.EGOAI_Victory,  self._frameNumVictory, self._animationTimeVictory, animationBinding);
-    },
     /**
      * GameObject Animation End
      */
-
-
 
     canTakeDamage: function(){
         return this._bTakeDamaged;
@@ -246,8 +132,6 @@ var GameObjectBase = cc.Node.extend({
     takeDamaged: function(Damage){
         return Damage;
     },
-
-
 
     /**
      * Constructor function, override it to extend the construction behavior, remember to call "this._super()" in the extended "ctor" function.
