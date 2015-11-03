@@ -5,8 +5,13 @@
 var CameCharacterBase = GameObjectBase.extend({
     _className: "CameCharacterBase",
 
-    ctor:function(){
+    ctor:function() {
         this._super();
+    },
+
+    onEnter:function () {
+        this._super();
+        //GameLog.c("CameCharacterBase onEnter()");
     },
 
     init: function () {
@@ -22,20 +27,20 @@ var CameCharacterBase = GameObjectBase.extend({
     //
     _AnimationsInfo: [],
     //Idle
-    _frameNumIdle: 1,
-    _animationTimeIdle: 1,
+    _frameCountIdle: 1,
+    _animateIntervalIdle: 1,
     //Move
-    _frameNumMove: 1,
-    _animationTimeMove: 1,
+    _frameCountMove: 1,
+    _animateIntervalMove: 1,
     //Attack1
-    _frameNumAttack1: 1,
-    _animationTimeAttack1: 1,
+    _frameCountAttack1: 1,
+    _animateIntervalAttack1: 1,
     //Attack2
-    _frameNumAttack2: 1,
-    _animationTimeAttack2: 1,
+    _frameCountAttack2: 1,
+    _animationIntervalAttack2: 1,
     //Victory
-    _frameNumVictory: 1,
-    _animationTimeVictory: 1,
+    _frameCountVictory: 1,
+    _animationIntervalVictory: 1,
 
     _initFrameAnimSeqs: function(){
         if(this._sAnimResName == "")
@@ -65,7 +70,35 @@ var CameCharacterBase = GameObjectBase.extend({
         this.addChild(this._MyRootSprite);
     },
 
-    _createCharFrameAnimSeq: function(AnimIdx, FrameNum, AnimTime, SpecialAnimBinding, bRestoreOriginalFrame){
+
+//    /*AnimationCache*/
+//    //从SpriteFrameCache中获取每一帧组成动画
+//    Vector<SpriteFrame*> sps;
+//for (int i = 1; i < 11; i++)
+//{
+//    char buf[30] = {0};
+//    sprintf_s(buf, "fish03_%02d.png", i);
+//    auto spfm = SpriteFrameCache::getInstance()->getSpriteFrameByName(buf);
+//    sps.pushBack(spfm);
+//}
+//
+//auto animation = Animation::createWithSpriteFrames(sps, 0.2f);
+////animation->setLoops(100);
+//
+////把动画添加到AnimationCache中
+//AnimationCache::getInstance()->addAnimation(animation, "fish");
+//
+////从AnimationCache中获取动画创建一个动画动作
+//auto animate = Animate::create(AnimationCache::getInstance()->getAnimation("fish"));
+//
+//auto sp33 = Sprite::create();
+//sp33->setPosition(Vec2(100, 300));
+//addChild(sp33, 9);
+//
+////重复执行这个动画动作
+//sp33->runAction(RepeatForever::create(animate));
+
+    _createCharFrameAnimSeq: function(AnimIdx, FrameCount, FrameInterval, SpecialAnimBinding, bRestoreOriginalFrame){
         var animationBinding = (SpecialAnimBinding == null ? [] : SpecialAnimBinding);
         if(SpecialAnimBinding == null){
             animationBinding[EGameObjectDirection.EGOD_Down] = EResDirectionId.ERDI_Down;
@@ -77,23 +110,23 @@ var CameCharacterBase = GameObjectBase.extend({
             animationBinding[EGameObjectDirection.EGOD_Left] = EResDirectionId.ERDI_Right;
             animationBinding[EGameObjectDirection.EGOD_LeftDown] = EResDirectionId.ERDI_Down;
         }
-        var animations = [];
+        var animatesCache = [];
 
         for (var i in animationBinding) {
-            var animation = null;
+            var animate = null;
             for(var ii = 0; ii < i; ii++)
             {
                 if(animationBinding[i] == animationBinding[ii])
                 {
-                    animation = animations[ii];
+                    animate = animatesCache[ii];
                     break;
                 }
             }
 
-            if(animation == null)
+            if(animate == null)
             {
-                animation = new cc.Animation();
-                for(var j = 0; j < FrameNum; j++ )
+                var animation = new cc.Animation();
+                for(var j = 0; j < FrameCount; j++ )
                 {
                     var frameName = this._sAnimResName + "_" + AnimIdx + "_" + animationBinding[i] + "_" + j + ".png";
                     var spriteFrame = cc.spriteFrameCache.getSpriteFrame(frameName);
@@ -104,22 +137,24 @@ var CameCharacterBase = GameObjectBase.extend({
                     }
                     animation.addSpriteFrame(spriteFrame);
                 }
-                animation.setDelayPerUnit(AnimTime / FrameNum);
+                animation.setDelayPerUnit(FrameInterval);
                 animation.setRestoreOriginalFrame(bRestoreOriginalFrame == null ? true : bRestoreOriginalFrame);
+
+                animate = cc.animate(animation);
             }
 
-            animations.push(animation);
+            animatesCache.push(animate);
         }
 
-        return animations;
+        return animatesCache;
     },
 
     _createFrameAnimSeqIdle: function(){
-        this._AnimationsInfo[EGameObjectAnimIdx.EGOAI_Idle] = this._createCharFrameAnimSeq(EGameObjectAnimIdx.EGOAI_Idle,  this._frameNumIdle, this._animationTimeIdle);
+        this._AnimationsInfo[EGameObjectAnimIdx.EGOAI_Idle] = this._createCharFrameAnimSeq(EGameObjectAnimIdx.EGOAI_Idle,  this._frameCountIdle, this._animateIntervalIdle);
     },
 
     _createFrameAnimSeqMove: function(){
-        this._AnimationsInfo[EGameObjectAnimIdx.EGOAI_Walk] = this._createCharFrameAnimSeq(EGameObjectAnimIdx.EGOAI_Walk,  this._frameNumMove, this._animationTimeMove);
+        this._AnimationsInfo[EGameObjectAnimIdx.EGOAI_Walk] = this._createCharFrameAnimSeq(EGameObjectAnimIdx.EGOAI_Walk,  this._frameCountMove, this._animateIntervalMove);
     },
 
     _createFrameAnimSeqRoadieRun: function(){
@@ -129,11 +164,11 @@ var CameCharacterBase = GameObjectBase.extend({
     },
 
     _createFrameAnimSeqAttack1: function(){
-        this._AnimationsInfo[EGameObjectAnimIdx.EGOAI_Attack1] = this._createCharFrameAnimSeq(EGameObjectAnimIdx.EGOAI_Attack1,  this._frameNumAttack1, this._animationTimeAttack1);
+        this._AnimationsInfo[EGameObjectAnimIdx.EGOAI_Attack1] = this._createCharFrameAnimSeq(EGameObjectAnimIdx.EGOAI_Attack1,  this._frameCountAttack1, this._animateIntervalAttack1);
     },
 
     _createFrameAnimSeqAttack2: function(){
-        this._AnimationsInfo[EGameObjectAnimIdx.EGOAI_Attack2] = this._createCharFrameAnimSeq(EGameObjectAnimIdx.EGOAI_Attack2,  this._frameNumAttack2, this._animationTimeAttack2);
+        this._AnimationsInfo[EGameObjectAnimIdx.EGOAI_Attack2] = this._createCharFrameAnimSeq(EGameObjectAnimIdx.EGOAI_Attack2,  this._frameCountAttack2, this._animationIntervalAttack2);
     },
 
     _createFrameAnimSeqVictory: function()
@@ -148,6 +183,14 @@ var CameCharacterBase = GameObjectBase.extend({
         animationBinding[EGameObjectDirection.EGOD_Left] = EResDirectionId.ERDI_Down;
         animationBinding[EGameObjectDirection.EGOD_LeftDown] = EResDirectionId.ERDI_Down;
 
-        this._AnimationsInfo[EGameObjectAnimIdx.EGOAI_Victory] = this._createCharFrameAnimSeq(EGameObjectAnimIdx.EGOAI_Victory,  this._frameNumVictory, this._animationTimeVictory, animationBinding);
+        this._AnimationsInfo[EGameObjectAnimIdx.EGOAI_Victory] = this._createCharFrameAnimSeq(EGameObjectAnimIdx.EGOAI_Victory,  this._frameCountVictory, this._animationIntervalVictory, animationBinding);
+    },
+
+    /**
+     * Action
+     */
+    moverTo: function(TargetLoc){
+
     }
+
 })

@@ -19,18 +19,38 @@ var HelloWorldLayer = GameLayerBase.extend({
     }
 });
 
-var HelloWorldScene = cc.Scene.extend({
+var HelloWorldScene = GameSceneBase.extend({
     onEnter:function () {
         this._super();
-        var layer = new HelloWorldLayer();
-        this.addChild(layer);
+//        var layer = new HelloWorldLayer();
+//        this.addChild(layer);
 
         var size = cc.director.getWinSize();
-        var GameObj = new GameCharacter_Test02();
+        var GameObj = new GameCharacter_Test01();
         GameObj.x = size.width / 4;
         GameObj.y = size.height / 4;
         GameObj.init();
         this.addChild(GameObj);
+    },
+
+    _initLayer_Background: function(){
+        GameLog.c("HelloWorldScene _initLayer_Background()");
+    },
+
+    _initLayer_GamePlay: function(){
+        GameLog.c("HelloWorldScene _initLayer_GamePlay()");
+    },
+
+    _initLayer_PlayerInput: function(){
+        GameLog.c("HelloWorldScene _initLayer_PlayerInput()");
+    },
+
+    _initLayer_UI: function(){
+        GameLog.c("HelloWorldScene _initLayer_UI()");
+    },
+
+    _initLayer_Mask: function(){
+        GameLog.c("HelloWorldScene _initLayer_Mask()");
     }
 });
 

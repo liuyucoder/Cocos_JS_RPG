@@ -25,6 +25,8 @@
         "src/GameLayers/GameLayerBase.js",
         "src/GameLayers/GameLayerInputBase.js",
 
+        "src/GameScenes/GameSceneBase.js",
+
         "src/app.js"
     ]
 }

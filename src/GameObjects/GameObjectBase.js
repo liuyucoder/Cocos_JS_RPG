@@ -81,17 +81,32 @@ var GameObjectBase = cc.Node.extend({
     /**
      * GameObject Draw information    Begin
      */
-    _bDrawInfo: false,
+    _bRenderObjInfo: false,
+    _renderObjInfo: function(HideAll){
+    },
+    _initRenderObjInfo: function(){
+        this._initShadow();
+        this._initFrameAnimSeqs();
+        this._initBloodBar();
+    },
+
     _sGameObjectName: "GameObjectName",
 
     _bDrawBloodBar: false,
     _BloodBar: null,
     _BloodBarBg: null,
     _BloodBarHeight: 20,
-    drawBloodBar: function(){
-        return false;
+    _initBloodBar: function(){
+    },
+    drawBloodBar: function(bShow){
+        if(this._BloodBarBg)
+        {
+            this._BloodBarBg.setVisible(bShow);
+        }
     },
     _ObjShadow: null,
+    _initShadow: function(){
+    },
     _Vehicle: null,
     /**
      * GameObject Draw Information    End
@@ -149,7 +164,7 @@ var GameObjectBase = cc.Node.extend({
      */
     init: function () {
         //GameLog.c("GameObjectBase init()");
-        this._initFrameAnimSeqs();
+        this._initRenderObjInfo();
 
         return true;
     }
