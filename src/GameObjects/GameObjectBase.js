@@ -155,6 +155,12 @@ var GameObjectBase = cc.Node.extend({
     ctor: function(){
         this._super();
         //GameLog.c("GameObjectBase ctor()");
+
+        this._initDefaultData();
+    },
+
+    _initDefaultData: function(){
+        GameLog.c("GameObjectBase _initDefaultData()");
     },
 
     /**
