@@ -5,10 +5,6 @@ var resWelcome = {
 
 var res = {
     HelloWorld_png : "res/HelloWorld.png",
-    Char0001_p : "res/Characters/1_4.plist",
-    Char0001_t : "res/Characters/1_4.png",
-    Char0002_p : "res/Characters/Sh8.plist",
-    Char0002_t : "res/Characters/Sh8.png",
     MainScene_json : "res/MainScene.json"
 };
 
@@ -23,7 +19,20 @@ var resPlist_Chars = {
     Char0002_t : "res/Characters/Sh8.png"
 };
 
+var resCSV = {
+    CharInfo: "res/csv/chars.csv",
+    BuildInfo: "res/csv/buildings.csv"
+};
+
 var g_resources = [];
 for (var i in res) {
     g_resources.push(res[i]);
+}
+
+for (var i in resPlist_Chars) {
+    g_resources.push(resPlist_Chars[i]);
+}
+
+for (var i in resCSV) {
+    g_resources.push(resCSV[i]);
 }
