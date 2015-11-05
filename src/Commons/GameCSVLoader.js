@@ -3,6 +3,13 @@
  */
 
 //******************************************************* Data Provider
+//! character data struct
+//var CharDataStruct = {
+//    CharID: 0,
+//    CharName: "",
+//    CharaLevel: 1
+//};
+
 var GameDefaultDataProviders = {
     initOver: false,
     dataProviders: {},
@@ -14,8 +21,7 @@ var GameDefaultDataProviders = {
         }
         switch (url){
             case resCSV.CharInfo:
-                GameLog.c("initDataProvider() Url=", url);
-                self.dataProviders[resCSV.CharInfo] = "@Chars";
+                self.dataProviders[resCSV.CharInfo] = self._charDataParse(data);
                 break;
             case resCSV.BuildInfo:
                 GameLog.c("initDataProvider() Url=", url);
@@ -41,6 +47,34 @@ var GameDefaultDataProviders = {
         {
             CSV.releaseAll();
         }
+    },
+
+    _charDataParse: function(data){
+        var targetStr = "\r\n";
+        var startIdx = -1;
+        var ValueIndex = -1;
+
+        startIdx = data.toString().indexOf(targetStr);
+        GameLog.c("@@@@@@ 1", startIdx);
+        data = data.substring(startIdx + targetStr.length, data.length);
+        GameLog.c("@@@@@@ 2", data);
+
+        startIdx = data.toString().indexOf(targetStr);
+        GameLog.c("@@@@@@ 3", startIdx);
+        data = data.substring(startIdx + targetStr.length, data.length);
+        GameLog.c("@@@@@@ 4", data);
+
+        startIdx = data.toString().indexOf(targetStr);
+        GameLog.c("@@@@@@ 5", startIdx);
+        data = data.substring(startIdx + targetStr.length, data.length);
+        GameLog.c("@@@@@@ 6", data);
+
+
+        return [];
+    },
+
+    _buildDataParse: function(data){
+
     }
 };
 
