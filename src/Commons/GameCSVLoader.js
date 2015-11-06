@@ -21,11 +21,10 @@ var GameDefaultDataProviders = {
         }
         switch (url){
             case resCSV.CharInfo:
-                self.dataProviders[resCSV.CharInfo] = self._charDataParse(data);
+                self.dataProviders[resCSV.CharInfo] = self._csvDataParse(data, self._charDataParse);
                 break;
             case resCSV.BuildInfo:
-                GameLog.c("initDataProvider() Url=", url);
-                self.dataProviders[resCSV.BuildInfo] = "@Build";
+                self.dataProviders[resCSV.BuildInfo] = self._csvDataParse(data, self._buildDataParse);
                 break;
             default :
                 GameLog.w("initDataProvider() faild.   Url=", url);
@@ -36,8 +35,7 @@ var GameDefaultDataProviders = {
         for(var i in resCSV){
             if(!self.dataProviders[resCSV[i]])
             {
-                shouldFinish =false;
-                //GameLog.c("@@@@@@ ", resCSV[i]);
+                shouldFinish = false;
                 break;
             }
         }
@@ -46,35 +44,78 @@ var GameDefaultDataProviders = {
         if(self.initOver)
         {
             CSV.releaseAll();
+
+            //! test code
+//            for(var i in self.dataProviders)
+//            {
+//                GameLog.c("@@@1", self.dataProviders[i]);
+//                for(var j in self.dataProviders[i])
+//                {
+//                    GameLog.c("@@@2", self.dataProviders[i][j]);
+//                    for(var m in self.dataProviders[i][j])
+//                    {
+//                        GameLog.c("@@@3", self.dataProviders[i][j][m]);
+//                    }
+//                }
+//            }
         }
     },
 
-    _charDataParse: function(data){
+    _csvDataParse: function(data, optionF){
         var targetStr = "\r\n";
+        var targetStr1 = ",";
         var startIdx = -1;
-        var ValueIndex = -1;
+        var dataIdx = -1;
+        var dataTaker = [];
+        //var dataGroup = [];
+
+        //! remove first line
+        startIdx = data.toString().indexOf(targetStr);
+        data = data.substring(startIdx + targetStr.length, data.length);
 
         startIdx = data.toString().indexOf(targetStr);
-        GameLog.c("@@@@@@ 1", startIdx);
-        data = data.substring(startIdx + targetStr.length, data.length);
-        GameLog.c("@@@@@@ 2", data);
+        while(startIdx !== -1){
+            var dataStr = data.substring(0, startIdx);
 
-        startIdx = data.toString().indexOf(targetStr);
-        GameLog.c("@@@@@@ 3", startIdx);
-        data = data.substring(startIdx + targetStr.length, data.length);
-        GameLog.c("@@@@@@ 4", data);
+            //! parse line datas
+            var datas = [];
+            var dataValue = "";
+            do{
+                dataIdx = dataStr.indexOf(targetStr1);
+                if(dataIdx != -1){
+                    dataValue = dataStr.substring(0, dataIdx);
+                    dataStr = dataStr.substring(dataIdx + targetStr1.length, dataStr.length);
+                }
+                else{
+                    dataValue = dataStr;
+                    dataStr = "";
+                }
+                datas.push(dataValue);
+            }while(dataStr.length !== 0);
 
-        startIdx = data.toString().indexOf(targetStr);
-        GameLog.c("@@@@@@ 5", startIdx);
-        data = data.substring(startIdx + targetStr.length, data.length);
-        GameLog.c("@@@@@@ 6", data);
+//            var dataLine = optionF(datas);
+////            if(dataLine[1] > 0 && dataLine[1] < dataGroup.length)
+////            {
+////                dataGroup[].push(dataLine);
+////            }
+//            dataTaker[dataLine[1]].push(dataLine);
+            dataTaker.push(optionF(datas));
 
+            data = data.substring(startIdx + targetStr.length, data.length);
+            startIdx = data.toString().indexOf(targetStr);
+        }
 
-        return [];
+        return dataTaker;
     },
 
-    _buildDataParse: function(data){
+    _charDataParse: function(datas){
+        //GameLog.c("##### _charDataParse()");
+        return datas;
+    },
 
+    _buildDataParse: function(datas){
+        //GameLog.c("##### _buildDataParse()");
+        return datas;
     }
 };
 
@@ -127,7 +168,7 @@ var CSV = {
         for (var key in cache)
             delete cache[key];
 
-        //GameLog.c("CSV.releaseAll()");
+        GameLog.c("CSV.releaseAll()");
     }
 };
 
