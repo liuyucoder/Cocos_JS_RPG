@@ -46,18 +46,23 @@ var GameDefaultDataProviders = {
             CSV.releaseAll();
 
             //! test code
-//            for(var i in self.dataProviders)
-//            {
-//                GameLog.c("@@@1", self.dataProviders[i]);
-//                for(var j in self.dataProviders[i])
-//                {
+            for(var i in self.dataProviders)
+            {
+                //GameLog.c("@@@1", self.dataProviders[i]);
+                for(var j in self.dataProviders[i])
+                {
 //                    GameLog.c("@@@2", self.dataProviders[i][j]);
 //                    for(var m in self.dataProviders[i][j])
 //                    {
+//                        GameLog.c("@@@3", self.dataProviders[i][j]);
 //                        GameLog.c("@@@3", self.dataProviders[i][j][m]);
+//                        for(var n in self.dataProviders[i][j][m])
+//                        {
+//                            GameLog.c("@@@4", self.dataProviders[i][j][m][n]);
+//                        }
 //                    }
-//                }
-//            }
+                }
+            }
         }
     },
 
@@ -67,15 +72,23 @@ var GameDefaultDataProviders = {
         var startIdx = -1;
         var dataIdx = -1;
         var dataTaker = [];
-        //var dataGroup = [];
+        var dataGroup = [];
 
         //! remove first line
-        startIdx = data.toString().indexOf(targetStr);
+        startIdx = data.toString().trim().indexOf(targetStr);
         data = data.substring(startIdx + targetStr.length, data.length);
 
-        startIdx = data.toString().indexOf(targetStr);
-        while(startIdx !== -1){
-            var dataStr = data.substring(0, startIdx);
+        while(data !== ""){
+            var dataStr = "";
+            startIdx = data.toString().indexOf(targetStr);
+            //GameLog.c("@@@", data);
+            if(startIdx !== -1){
+                dataStr = data.substring(0, startIdx);
+                data = data.substring(startIdx + targetStr.length, data.length);
+            }else{
+                dataStr = data;
+                data = "";
+            }
 
             //! parse line datas
             var datas = [];
@@ -93,16 +106,22 @@ var GameDefaultDataProviders = {
                 datas.push(dataValue);
             }while(dataStr.length !== 0);
 
-//            var dataLine = optionF(datas);
-////            if(dataLine[1] > 0 && dataLine[1] < dataGroup.length)
-////            {
-////                dataGroup[].push(dataLine);
-////            }
-//            dataTaker[dataLine[1]].push(dataLine);
-            dataTaker.push(optionF(datas));
-
-            data = data.substring(startIdx + targetStr.length, data.length);
-            startIdx = data.toString().indexOf(targetStr);
+            var dataLine = optionF(datas);
+            if(dataGroup.length <= 0 || dataGroup[0][0] == dataLine[0]){
+                dataGroup.push(dataLine);
+                if(data === "")
+                {
+                    dataTaker.push(dataGroup);
+                    GameLog.c("@@@1",dataGroup);
+                    dataGroup = [];
+                }
+            }else{
+                dataTaker.push(dataGroup);
+                GameLog.c("@@@2",dataGroup);
+                dataGroup = [];
+                dataGroup.push(dataLine);
+            }
+            // dataTaker.push(optionF(datas));
         }
 
         return dataTaker;

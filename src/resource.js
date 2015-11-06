@@ -20,7 +20,7 @@ var resPlist_Chars = {
 };
 
 var resCSV = {
-    CharInfo: "res/csv/chars.csv",
+    //CharInfo: "res/csv/chars.csv",
     BuildInfo: "res/csv/buildings.csv"
 };
 
