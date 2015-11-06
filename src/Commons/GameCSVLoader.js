@@ -46,11 +46,11 @@ var GameDefaultDataProviders = {
             CSV.releaseAll();
 
             //! test code
-            for(var i in self.dataProviders)
-            {
-                //GameLog.c("@@@1", self.dataProviders[i]);
-                for(var j in self.dataProviders[i])
-                {
+//            for(var i in self.dataProviders)
+//            {
+//                //GameLog.c("@@@1", self.dataProviders[i]);
+//                for(var j in self.dataProviders[i])
+//                {
 //                    GameLog.c("@@@2", self.dataProviders[i][j]);
 //                    for(var m in self.dataProviders[i][j])
 //                    {
@@ -61,8 +61,8 @@ var GameDefaultDataProviders = {
 //                            GameLog.c("@@@4", self.dataProviders[i][j][m][n]);
 //                        }
 //                    }
-                }
-            }
+//                }
+//            }
         }
     },
 
@@ -121,7 +121,6 @@ var GameDefaultDataProviders = {
                 dataGroup = [];
                 dataGroup.push(dataLine);
             }
-            // dataTaker.push(optionF(datas));
         }
 
         return dataTaker;
