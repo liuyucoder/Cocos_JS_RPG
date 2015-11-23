@@ -4,11 +4,11 @@
 
 //******************************************************* Data Provider
 //! character data struct
-//var CharDataStruct = {
-//    CharID: 0,
-//    CharName: "",
-//    CharaLevel: 1
-//};
+var CharDataStruct = {
+    CharID: 0,
+    CharName: "",
+    CharaLevel: 1
+};
 
 var GameDefaultDataProviders = {
     initOver: false,
@@ -21,10 +21,10 @@ var GameDefaultDataProviders = {
         }
         switch (url){
             case resCSV.CharInfo:
-                self.dataProviders[resCSV.CharInfo] = self._csvDataParse(data, self._charDataParse);
+                self.dataProviders[resCSV.CharInfo] = self._csvDataParse(data, self._charDataParse, url);
                 break;
             case resCSV.BuildInfo:
-                self.dataProviders[resCSV.BuildInfo] = self._csvDataParse(data, self._buildDataParse);
+                self.dataProviders[resCSV.BuildInfo] = self._csvDataParse(data, self._buildDataParse, url);
                 break;
             default :
                 GameLog.w("initDataProvider() faild.   Url=", url);
@@ -48,31 +48,33 @@ var GameDefaultDataProviders = {
             //! test code
 //            for(var i in self.dataProviders)
 //            {
-//                //GameLog.c("@@@1", self.dataProviders[i]);
-//                for(var j in self.dataProviders[i])
-//                {
-//                    GameLog.c("@@@2", self.dataProviders[i][j]);
-//                    for(var m in self.dataProviders[i][j])
+//                GameLog.c("#### %s #### Begin", i);
+//                var arr1 = self.dataProviders[i].keys();
+//                for(var m= 0; m < arr1.length; m++){
+//                    GameLog.c("#### ID=%s  ", arr1[m]);
+//                    var dataGroup = self.dataProviders[i].get(arr1[m]);
+//                    var arr2 = dataGroup.keys();
+//                    for(var n = 0; n < arr2.length; n++)
 //                    {
-//                        GameLog.c("@@@3", self.dataProviders[i][j]);
-//                        GameLog.c("@@@3", self.dataProviders[i][j][m]);
-//                        for(var n in self.dataProviders[i][j][m])
-//                        {
-//                            GameLog.c("@@@4", self.dataProviders[i][j][m][n]);
-//                        }
+//                        GameLog.c("## Lvl=%s  Data=%s", arr2[n], dataGroup.get(arr2[n]));
 //                    }
 //                }
+//                GameLog.c("#### %s #### End", i);
 //            }
         }
     },
 
-    _csvDataParse: function(data, optionF){
+    _csvDataParse: function(data, optionF, url){
         var targetStr = "\r\n";
         var targetStr1 = ",";
         var startIdx = -1;
         var dataIdx = -1;
         var dataTaker = [];
         var dataGroup = [];
+
+        var dataID = -1;
+        var dataLvl = -1;
+        var dataMap = new Map();
 
         //! remove first line
         startIdx = data.toString().trim().indexOf(targetStr);
@@ -81,7 +83,6 @@ var GameDefaultDataProviders = {
         while(data !== ""){
             var dataStr = "";
             startIdx = data.toString().indexOf(targetStr);
-            //GameLog.c("@@@", data);
             if(startIdx !== -1){
                 dataStr = data.substring(0, startIdx);
                 data = data.substring(startIdx + targetStr.length, data.length);
@@ -107,23 +108,29 @@ var GameDefaultDataProviders = {
             }while(dataStr.length !== 0);
 
             var dataLine = optionF(datas);
-            if(dataGroup.length <= 0 || dataGroup[0][0] == dataLine[0]){
-                dataGroup.push(dataLine);
-                if(data === "")
+            //! Index 0 is ID, Index 1 is Lvl
+            dataID = dataLine[0];
+            dataLvl = dataLine[1];
+            if(dataMap.containsKey(dataID))
+            {
+                if(dataMap.get(dataID).containsKey(dataLvl))
                 {
-                    dataTaker.push(dataGroup);
-                    GameLog.c("@@@1",dataGroup);
-                    dataGroup = [];
+                    GameLog.w("_csvDataParse()  Parse the same Level data.  URL=%s, ID=%s, Level=%s", url, dataID, dataLvl);
                 }
-            }else{
-                dataTaker.push(dataGroup);
-                GameLog.c("@@@2",dataGroup);
-                dataGroup = [];
-                dataGroup.push(dataLine);
+                else
+                {
+                    dataMap.get(dataID).put(dataLvl, dataLine);
+                }
+            }
+            else
+            {
+                var dataGroupMap = new Map();
+                dataGroupMap.put(dataLvl, dataLine);
+                dataMap.put(dataID, dataGroupMap);
             }
         }
 
-        return dataTaker;
+        return dataMap;
     },
 
     _charDataParse: function(datas){
@@ -134,6 +141,27 @@ var GameDefaultDataProviders = {
     _buildDataParse: function(datas){
         //GameLog.c("##### _buildDataParse()");
         return datas;
+    },
+
+    //! Interface
+    getCharDataByName: function(CharName){
+    },
+    getCharDataByID: function(CharID){
+//            for(var i in self.dataProviders)
+//            {
+//                GameLog.c("#### %s #### Begin", i);
+//                var arr1 = self.dataProviders[i].keys();
+//                for(var m= 0; m < arr1.length; m++){
+//                    GameLog.c("#### ID=%s  ", arr1[m]);
+//                    var dataGroup = self.dataProviders[i].get(arr1[m]);
+//                    var arr2 = dataGroup.keys();
+//                    for(var n = 0; n < arr2.length; n++)
+//                    {
+//                        GameLog.c("## Lvl=%s  Data=%s", arr2[n], dataGroup.get(arr2[n]));
+//                    }
+//                }
+//                GameLog.c("#### %s #### End", i);
+//            }
     }
 };
 

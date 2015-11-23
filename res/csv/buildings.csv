@@ -1,6 +1,6 @@
-BuildId,BuildName,BuildPrice
-2000,Build1,100
-2000,test,199
-2001,Build2,200
-2002,Build3,300
-2002,Build3,299
+build_id,build_lvl,class_name,build_name,BuildPrice
+2000,0,buildTest0,build0,100
+2000,1,buildTest0,build0,199
+2001,0,buildTest1,build1,200
+2002,0,buildTest2,build2,300
+2002,1,buildTest2,build2,299

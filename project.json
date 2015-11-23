@@ -14,6 +14,7 @@
         "src/resource.js",
 
         "src/Commons/GameLog.js",
+        "src/Commons/Map.js",
         "src/Commons/GameCSVLoader.js",
         "src/Commons/GameMgr_ResCache.js",
 
