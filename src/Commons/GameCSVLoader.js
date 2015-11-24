@@ -5,10 +5,46 @@
 //******************************************************* Data Provider
 //! character data struct
 var CharDataStruct = {
-    CharID: 0,
-    CharName: "",
-    CharaLevel: 1
+    sClassName: 0,
+    iID: 1,
+    iLevel: 2,
+    bBase: 3,
+    sResPng: 4,
+    sResPList: 5,
+    sAnimID: 6,
+    fSpriteOffsetX: 7,
+    fSpriteOffsetY: 8,
+    sCharName: 9
+//    iGoldNeed: 4,
+//    iFoodNeed: 5,
+//    iSoulNeed: 6,
+//    fTrainingTime: 7,
+//    iDependBuilding1_ID: 8,
+//    iDependBuilding1_Lvl: 9,
+//    iDependBuilding2_ID: 10,
+//    iDependBuilding2_Lvl: 11,
+//    iHouseSpace: 12,
+//    iHitPoints: 13,
+//    fAttackSpeed: 14,
+//    fWalkSpeed: 15,
+//    fResDamage: 16,
+//    fDamage: 17,
+//    fDamage2: 18,
+//    fWallDamage: 19,
+//    bFlying: 20,
+//    bRemote: 21,
+//    fOffsetX: 22,
+//    fOffsetY: 21,
+//    bAttackAirTarget: 22,
+//    bAttackGroundTarget: 23,
+//    iPreferAttackBuildingID: 24,
+//    iUpgradeNeedFood: 25,
+//    fAttackRangeMin: 26,
+//    fAttackRangeMax: 27,
+//    fDefaultHP: 28,
+//    sMoveEffect: 29,
 };
+
 
 var GameDefaultDataProviders = {
     initOver: false,
@@ -49,16 +85,24 @@ var GameDefaultDataProviders = {
 //            for(var i in self.dataProviders)
 //            {
 //                GameLog.c("#### %s #### Begin", i);
-//                var arr1 = self.dataProviders[i].keys();
-//                for(var m= 0; m < arr1.length; m++){
-//                    GameLog.c("#### ID=%s  ", arr1[m]);
-//                    var dataGroup = self.dataProviders[i].get(arr1[m]);
-//                    var arr2 = dataGroup.keys();
-//                    for(var n = 0; n < arr2.length; n++)
+//                var mapByClassName = self.dataProviders[i].dataMapByClassName;
+//                var mapByID = self.dataProviders[i].dataMapByID;
+//
+//                var arrMapNames = mapByClassName.keys();
+//                for(var m= 0; m < arrMapNames.length; m++){
+//                    var id = this._getIDByClassName(i, arrMapNames[m]);
+//                    if(id != INDEX_NONE)
 //                    {
-//                        GameLog.c("## Lvl=%s  Data=%s", arr2[n], dataGroup.get(arr2[n]));
+//                        GameLog.c("#### ClassName=%s  ID=%s", arrMapNames[m], id);
+//                        var dataGroup = this._getDataByID(i, id);
+//                        var arr2 = dataGroup.keys();
+//                        for(var n = 0; n < arr2.length; n++)
+//                        {
+//                            GameLog.c("## Lvl=%s  Data=%s", arr2[n], dataGroup.get(arr2[n]));
+//                        }
 //                    }
 //                }
+//
 //                GameLog.c("#### %s #### End", i);
 //            }
         }
@@ -69,12 +113,12 @@ var GameDefaultDataProviders = {
         var targetStr1 = ",";
         var startIdx = -1;
         var dataIdx = -1;
-        var dataTaker = [];
-        var dataGroup = [];
 
+        var dataClassName = "";
         var dataID = -1;
         var dataLvl = -1;
-        var dataMap = new Map();
+        var dataMapByID = new Map();
+        var dataMapByClassName = new Map();
 
         //! remove first line
         startIdx = data.toString().trim().indexOf(targetStr);
@@ -108,29 +152,42 @@ var GameDefaultDataProviders = {
             }while(dataStr.length !== 0);
 
             var dataLine = optionF(datas);
-            //! Index 0 is ID, Index 1 is Lvl
-            dataID = dataLine[0];
-            dataLvl = dataLine[1];
-            if(dataMap.containsKey(dataID))
+            //! Index 0 is Class Name
+            //! Index 1 is ID
+            //! Index 2 is Level
+            dataClassName = dataLine[0];
+            dataID = dataLine[1];
+            dataLvl = dataLine[2];
+
+            //! Insert ID Map by class name
+            if(!dataMapByClassName.containsKey(dataClassName))
+                dataMapByClassName.put(dataClassName, dataID);
+
+            //! Insert Data Map by ID
+            if(dataMapByID.containsKey(dataID))
             {
-                if(dataMap.get(dataID).containsKey(dataLvl))
+                if(dataMapByID.get(dataID).containsKey(dataLvl))
                 {
                     GameLog.w("_csvDataParse()  Parse the same Level data.  URL=%s, ID=%s, Level=%s", url, dataID, dataLvl);
                 }
                 else
                 {
-                    dataMap.get(dataID).put(dataLvl, dataLine);
+                    dataMapByID.get(dataID).put(dataLvl, dataLine);
                 }
             }
             else
             {
                 var dataGroupMap = new Map();
                 dataGroupMap.put(dataLvl, dataLine);
-                dataMap.put(dataID, dataGroupMap);
+                dataMapByID.put(dataID, dataGroupMap);
             }
         }
 
-        return dataMap;
+        var dataTaker = {};
+        dataTaker.dataMapByClassName = dataMapByClassName;
+        dataTaker.dataMapByID = dataMapByID;
+
+        return dataTaker;
     },
 
     _charDataParse: function(datas){
@@ -144,24 +201,78 @@ var GameDefaultDataProviders = {
     },
 
     //! Interface
-    getCharDataByName: function(CharName){
+    getCharIDByClassName: function(ClassName){
+        var self = this;
+        return self._getIDByClassName(resCSV.CharInfo, ClassName);
     },
+
+    getCharDataByClassName: function(CharName){
+       var self = this;
+       return self._getDataByClassName(resCSV.CharInfo, CharName);
+    },
+
     getCharDataByID: function(CharID){
-//            for(var i in self.dataProviders)
-//            {
-//                GameLog.c("#### %s #### Begin", i);
-//                var arr1 = self.dataProviders[i].keys();
-//                for(var m= 0; m < arr1.length; m++){
-//                    GameLog.c("#### ID=%s  ", arr1[m]);
-//                    var dataGroup = self.dataProviders[i].get(arr1[m]);
-//                    var arr2 = dataGroup.keys();
-//                    for(var n = 0; n < arr2.length; n++)
-//                    {
-//                        GameLog.c("## Lvl=%s  Data=%s", arr2[n], dataGroup.get(arr2[n]));
-//                    }
-//                }
-//                GameLog.c("#### %s #### End", i);
-//            }
+        var self = this;
+        return self._getDataByID(resCSV.CharInfo, CharID);
+    },
+
+    getBuildIDByClassName: function(ClassName){
+        var self = this;
+        return self._getIDByClassName(resCSV.BuildInfo, ClassName);
+    },
+
+    getBuildDataByClassName: function(BuildName){
+        var self = this;
+        return self._getDataByClassName(resCSV.BuildInfo, BuildName);
+    },
+
+    getBuildDataByID: function(BuildID){
+        var self = this;
+        return self._getDataByID(resCSV.BuildInfo, BuildID);
+    },
+
+
+    _getIDByClassName: function(DataProviderType, ClassName){
+        var self = this;
+        var res = INDEX_NONE;
+        if(self.dataProviders[DataProviderType].dataMapByClassName.containsKey(ClassName))
+        {
+            res = self.dataProviders[DataProviderType].dataMapByClassName.get(ClassName);
+        }
+        if(res === INDEX_NONE)
+            GameLog.w("###  _getIDByClassName() failed.  DataProviderType=%s ClassName=%s", DataProviderType, ClassName);
+
+        return res;
+    },
+
+    _getDataByClassName: function(DataProviderType, ClassName){
+        var self = this;
+        var res = null;
+
+        if(self.dataProviders[DataProviderType].dataMapByClassName.containsKey(ClassName))
+        {
+            var id = self.dataProviders[DataProviderType].dataMapByClassName.get(ClassName);
+            res = self._getDataByID(DataProviderType, id);
+        }
+
+        if(res === null)
+            GameLog.w("###  _getDataByClassName() failed.  DataProviderType=%s ClassName=%s", DataProviderType, ClassName);
+
+        return res;
+    },
+
+    _getDataByID: function(DataProviderType, ID){
+        var self = this;
+        var res = null;
+        if(self.dataProviders[DataProviderType].dataMapByID.containsKey(ID))
+        {
+            res = self.dataProviders[DataProviderType].dataMapByID.get(ID);
+        }
+
+        if(res === null)
+            GameLog.w("###  _getDataByID() failed.  DataProviderType=%s  ID=%s", DataProviderType, ID);
+
+        return res;
     }
 };
 

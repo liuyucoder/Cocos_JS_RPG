@@ -1,7 +1,7 @@
-char_id,char_lvl,class_name,char_name
-1000,0,charTest0,char0
-1000,0,charTest0,char0
-1001,0,charTest1,char1
-1002,0,charTest2,char2
-1002,1,charTest2,char2
-1002,2,charTest2,char2
+char_classname,char_id,char_lvl,char_bbase,char_respng,char_resplist,char_animid,char_spriteoffsetx,char_spriteoffsety,char_name
+charTest0,1000,0,TRUE,res/Characters/1_4.png,res/Characters/1_4.plist,1_4,0,71,CharName1000
+charTest0,1000,1,,res/Characters/1_4.png,res/Characters/1_4.plist,1_4,0,71,CharName1000
+charTest1,1001,0,TRUE,,,,,,CharName1001
+charTest2,1002,0,TRUE,,,,,,CharName1002
+charTest2,1002,1,,,,,,,CharName1002
+charTest2,1002,2,,,,,,,CharName1002

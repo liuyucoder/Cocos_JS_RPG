@@ -25,6 +25,8 @@
  * ……
  *
  */
+var INDEX_NONE = -1;
+
 function Map() {
     this.elements = new Array();
 
