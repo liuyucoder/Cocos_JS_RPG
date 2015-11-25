@@ -2,9 +2,8 @@
  * Created by yu.liu on 2015/11/2.
  */
 
-var GameCharacter_Test02 = CameCharacterBase.extend({
-    _className: "GameCharacter_Test02",
-    _sGameObjectName: "Fire Woman",
+var GameChar_Archer = CameCharacterBase.extend({
+    _className: "GameChar_Archer",
 
     ctor:function(){
         cc.spriteFrameCache.addSpriteFrames(resPlist_Chars.Char0002_p, resPlist_Chars.Char0002_t);
@@ -14,8 +13,8 @@ var GameCharacter_Test02 = CameCharacterBase.extend({
     /**
      * Animations
      */
-    _sAnimResPath: "res/Characters/Sh8.plist",
-    _sAnimResName: "Sh8",
+    _sResPlistPath: "res/Characters/Sh8.plist",
+    _sAnimResPrefix: "Sh8",
     //Idle
     _frameCountIdle: 2,
     _animateIntervalIdle: 0.75,

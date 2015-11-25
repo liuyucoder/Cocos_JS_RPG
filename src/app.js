@@ -22,14 +22,11 @@ var HelloWorldLayer = GameLayerBase.extend({
 var HelloWorldScene = GameSceneBase.extend({
     onEnter:function () {
         this._super();
-//        var layer = new HelloWorldLayer();
-//        this.addChild(layer);
 
         var size = cc.director.getWinSize();
-        var GameObj = new GameCharacter_Test01();
+        var GameObj = new GameChar_InfantryMan();
         GameObj.x = size.width / 4;
         GameObj.y = size.height / 4;
-        GameObj.init();
         this.addChild(GameObj);
     },
 

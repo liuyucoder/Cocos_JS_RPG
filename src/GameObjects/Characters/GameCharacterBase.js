@@ -5,25 +5,6 @@
 var CameCharacterBase = GameObjectBase.extend({
     _className: "CameCharacterBase",
 
-    ctor:function() {
-        this._super();
-    },
-
-    onEnter:function () {
-        this._super();
-        //GameLog.c("CameCharacterBase onEnter()");
-    },
-
-    init: function () {
-        this._super();
-        //GameLog.c("CameCharacterBase init()");
-        return true;
-    },
-
-
-    /**
-     * Animations
-     */
     //
     _AnimationsInfo: [],
     //Idle
@@ -42,10 +23,14 @@ var CameCharacterBase = GameObjectBase.extend({
     _frameCountVictory: 1,
     _animationIntervalVictory: 1,
 
+
+    /**
+     * Animations
+     */
     _initFrameAnimSeqs: function(){
-        if(this._sAnimResName == "")
+        if(this._sAnimResPrefix == "")
         {
-            GameLog.w(this._className + ": _sAnimResName is Null!");
+            GameLog.w(this._className + ": _sAnimResPrefix is Null!");
             return;
         }
 
@@ -128,7 +113,7 @@ var CameCharacterBase = GameObjectBase.extend({
                 var animation = new cc.Animation();
                 for(var j = 0; j < FrameCount; j++ )
                 {
-                    var frameName = this._sAnimResName + "_" + AnimIdx + "_" + animationBinding[i] + "_" + j + ".png";
+                    var frameName = this._sAnimResPrefix + "_" + AnimIdx + "_" + animationBinding[i] + "_" + j + ".png";
                     var spriteFrame = cc.spriteFrameCache.getSpriteFrame(frameName);
                     if(spriteFrame == null)
                     {
@@ -191,6 +176,43 @@ var CameCharacterBase = GameObjectBase.extend({
      */
     moverTo: function(TargetLoc){
 
+    },
+
+    ctor:function() {
+        this._super();
+    },
+
+    onEnter:function () {
+        this._super();
+        //GameLog.c("CameCharacterBase onEnter()");
+    },
+
+    _initDefaultData: function(){
+        var self = this;
+        var DataMapByLvl = GameDefaultDataProviders.getCharDataByClassName(self._className);
+        if(DataMapByLvl !== null){
+            GameLog.c("CameCharacterBase::_initDefaultData()   className=%s", self._className);
+
+//            self._GameObjLocName = defaultData[CharDataStruct.iID];
+//            _GameObjectID: -1,
+//            _GameObjectLvl: 0,
+//            _sResPngPath: "",
+//            _sResPlistPath: "",
+//            _sAnimResPrefix: "",
+//            _MyRootSpritePath: "",
+//            _GameObjectLvlMax: 0,
+//            _fDefaultHealth: 1000,
+//            _fDefaultGroundSpeed: 0,
+        }
+        else{
+            GameLog.w("CameCharacterBase::_initDefaultData() failed.   className=%s", self._className);
+        }
+    },
+
+    init: function () {
+        this._super();
+        GameLog.c("CameCharacterBase::init()");
+        return true;
     }
 
 })

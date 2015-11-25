@@ -11,10 +11,10 @@ var CharDataStruct = {
     bBase: 3,
     sResPng: 4,
     sResPList: 5,
-    sAnimID: 6,
+    sAnimResPrefix: 6,
     fSpriteOffsetX: 7,
     fSpriteOffsetY: 8,
-    sCharName: 9
+    sLocName: 9
 //    iGoldNeed: 4,
 //    iFoodNeed: 5,
 //    iSoulNeed: 6,
@@ -152,6 +152,9 @@ var GameDefaultDataProviders = {
             }while(dataStr.length !== 0);
 
             var dataLine = optionF(datas);
+            if(dataLine === null){
+                continue;
+            }
             //! Index 0 is Class Name
             //! Index 1 is ID
             //! Index 2 is Level
@@ -164,19 +167,15 @@ var GameDefaultDataProviders = {
                 dataMapByClassName.put(dataClassName, dataID);
 
             //! Insert Data Map by ID
-            if(dataMapByID.containsKey(dataID))
-            {
-                if(dataMapByID.get(dataID).containsKey(dataLvl))
-                {
+            if(dataMapByID.containsKey(dataID)){
+                if(dataMapByID.get(dataID).containsKey(dataLvl)){
                     GameLog.w("_csvDataParse()  Parse the same Level data.  URL=%s, ID=%s, Level=%s", url, dataID, dataLvl);
                 }
-                else
-                {
+                else{
                     dataMapByID.get(dataID).put(dataLvl, dataLine);
                 }
             }
-            else
-            {
+            else{
                 var dataGroupMap = new Map();
                 dataGroupMap.put(dataLvl, dataLine);
                 dataMapByID.put(dataID, dataGroupMap);
@@ -191,7 +190,32 @@ var GameDefaultDataProviders = {
     },
 
     _charDataParse: function(datas){
-        //GameLog.c("##### _charDataParse()");
+        for(var i in CharDataStruct){
+            if(CharDataStruct[i] >= datas.length){
+                GameLog.w("### _charDataParse()  Character Data do not match CharDataStruct.    ClassName=%s", datas[0]);
+                return null;
+            }
+
+            switch (CharDataStruct[i]){
+//                case CharDataStruct.sClassName:
+//                case CharDataStruct.sAnimResPrefix:
+//                case CharDataStruct.sResPng:
+//                case CharDataStruct.sResPList:
+//                case CharDataStruct.sLocName:
+                case CharDataStruct.bBase:
+                    datas[CharDataStruct[i]] = Boolean(datas[CharDataStruct[i]]);
+                    break;
+                case CharDataStruct.iID:
+                case CharDataStruct.iLevel:
+                    datas[CharDataStruct[i]] = parseInt(datas[CharDataStruct[i]]);
+                    break;
+                case CharDataStruct.fSpriteOffsetX:
+                case CharDataStruct.fSpriteOffsetY:
+                    datas[CharDataStruct[i]] = parseFloat(datas[CharDataStruct[i]]);
+                    break;
+            }
+        }
+
         return datas;
     },
 

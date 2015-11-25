@@ -2,9 +2,8 @@
  * Created by yu.liu on 2015/10/28.
  */
 
-var GameCharacter_Test01 = CameCharacterBase.extend({
-    _className: "GameCharacter_Test01",
-    _sGameObjectName: "Infantry Man",
+var GameChar_InfantryMan = CameCharacterBase.extend({
+    _className: "GameChar_InfantryMan",
 
     ctor:function(){
         cc.spriteFrameCache.addSpriteFrames(resPlist_Chars.Char0001_p, resPlist_Chars.Char0001_t);
@@ -14,8 +13,8 @@ var GameCharacter_Test01 = CameCharacterBase.extend({
     /**
      * Animations Begin
      */
-    _sAnimResPath: "res/Characters/1_4.plist",
-    _sAnimResName: "1_4",
+    _sResPlistPath: "res/Characters/1_4.plist",
+    _sAnimResPrefix: "1_4",
     //Idle
     _frameCountIdle: 2,
     _animateIntervalIdle: 0.75,

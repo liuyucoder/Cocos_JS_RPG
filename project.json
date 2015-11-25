@@ -21,8 +21,8 @@
         "src/GameObjects/GameObjectBase.js",
 
         "src/GameObjects/Characters/GameCharacterBase.js",
-        "src/GameObjects/Characters/GameCharacter_Test01.js",
-        "src/GameObjects/Characters/GameCharacter_Test02.js",
+        "src/GameObjects/Characters/GameChar_InfantryMan.js",
+        "src/GameObjects/Characters/GameChar_Archer.js",
 
         "src/GameLayers/GameLayerBase.js",
         "src/GameLayers/GameLayerInputBase.js",

@@ -50,6 +50,19 @@ var EGameObjectAnimIdx ={
 var GameObjectBase = cc.Node.extend({
     _className: "GameObjectBase",
 
+    /**
+     * ===================  GameObject Default Data  ===================
+     */
+    _GameObjLocName: "",
+    _GameObjectID: -1,
+    _GameObjectLvl: 0,
+    _sResPngPath: "",
+    _sResPlistPath: "",
+    _sAnimResPrefix: "",
+    _MyRootSpritePath: "",
+    _GameObjectLvlMax: 0,
+    _fDefaultHealth: 1000,
+    _fDefaultGroundSpeed: 0,
 
     /**
      * GameObject
@@ -57,8 +70,6 @@ var GameObjectBase = cc.Node.extend({
     _eGameObjectType: EGameObjectType.EGOT_Unknown,
 
     //
-    _GameObjectID: -1,
-    _GameObjectLvl: 0,
     _eGameObjectDirection: EGameObjectDirection.EGOD_Down,
     _eTeamNum: ETeamNum.ETT_Unknown,
     _bPlayer: false,
@@ -71,45 +82,56 @@ var GameObjectBase = cc.Node.extend({
     _bCanRoadieRun: false,
     _bCanBeForcedToRoadieRun: false,// if designer tells us to, we can roadie run (e.g. for guys we don't want roadie running normally, but their skeleton supports it)
     _bCanBlindFire: false,
-    _fDefaultGroundSpeed: 0,
 
     //
     _bTakeDamaged: false,
-    _fDefaultHealth: 1000,
-    _fCurrentHealth: 1000,
+    _fCurrentHealth: 0,
+
+    //
+    _bRenderObjInfo: false,
+    _bDrawBloodBar: false,
+    _BloodBar: null,
+    _BloodBarBg: null,
+    _BloodBarHeight: 20,
+    _ObjShadow: null,
+    //
+    _Vehicle: null,
+
+    //
+    _bUseFrameAnimation: true,
+    _MyRootSprite: null,
+    _CurrentAction: null,
 
     /**
-     * GameObject Draw information    Begin
+     * ===================  Draw information function  ===================Begin
      */
-    _bRenderObjInfo: false,
     _renderObjInfo: function(HideAll){
     },
+
     _initRenderObjInfo: function(){
         this._initShadow();
         this._initFrameAnimSeqs();
         this._initBloodBar();
     },
 
-    _sGameObjectName: "GameObjectName",
-
-    _bDrawBloodBar: false,
-    _BloodBar: null,
-    _BloodBarBg: null,
-    _BloodBarHeight: 20,
     _initBloodBar: function(){
     },
+
     drawBloodBar: function(bShow){
         if(this._BloodBarBg)
         {
             this._BloodBarBg.setVisible(bShow);
         }
     },
-    _ObjShadow: null,
+
     _initShadow: function(){
     },
-    _Vehicle: null,
     /**
-     * GameObject Draw Information    End
+     * ====================================================================End
+     */
+
+    /**
+     * ==========================  Animation  =============================Begin
      */
 
     /**
@@ -120,25 +142,15 @@ var GameObjectBase = cc.Node.extend({
      * GameObjeID + "_" + GameObjectLvl + "_" + AnimationID + "_"  _eGameObjectDirection + "_" + FrameIdx       eg.  "1_4_0_1_0"
      */
 
-    /**
-     * GameObject Animation Begin
-     *
-     */
-    _bUseFrameAnimation: true,
-    _sAnimResPath: "",
-    _sAnimResName: "",
-    _MyRootSpritePath: "",
-    _MyRootSprite: null,
-    _CurrentAction: null,
-
     _initFrameAnimSeqs: function(){
      },
 
     _finishFrameAnimSeqs: function(){
     },
     /**
-     * GameObject Animation End
+     * ====================================================================End
      */
+
 
     canTakeDamage: function(){
         return this._bTakeDamaged;
@@ -154,13 +166,16 @@ var GameObjectBase = cc.Node.extend({
      */
     ctor: function(){
         this._super();
-        //GameLog.c("GameObjectBase ctor()");
 
+        //! 1: Load data from csv
         this._initDefaultData();
+
+        //! 2: Init Render Info
+        this._initRenderObjInfo();
     },
 
     _initDefaultData: function(){
-        GameLog.c("GameObjectBase _initDefaultData()");
+        GameLog.c("GameObjectBase::_initDefaultData()");
     },
 
     /**
@@ -169,9 +184,7 @@ var GameObjectBase = cc.Node.extend({
      * @returns {boolean} Whether the initialization was successful.
      */
     init: function () {
-        //GameLog.c("GameObjectBase init()");
-        this._initRenderObjInfo();
-
+        GameLog.c("GameObjectBase::init()");
         return true;
     }
 })
