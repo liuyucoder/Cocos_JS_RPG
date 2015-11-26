@@ -6,15 +6,12 @@ var GameChar_InfantryMan = CameCharacterBase.extend({
     _className: "GameChar_InfantryMan",
 
     ctor:function(){
-        cc.spriteFrameCache.addSpriteFrames(resPlist_Chars.Char0001_p, resPlist_Chars.Char0001_t);
         this._super();
     },
 
     /**
      * Animations Begin
      */
-    _sResPlistPath: "res/Characters/1_4.plist",
-    _sAnimResPrefix: "1_4",
     //Idle
     _frameCountIdle: 2,
     _animateIntervalIdle: 0.75,

@@ -5,6 +5,7 @@
 var CameCharacterBase = GameObjectBase.extend({
     _className: "CameCharacterBase",
 
+    CharDataMapByLvl: null,
     //
     _AnimationsInfo: [],
     //Idle
@@ -189,24 +190,39 @@ var CameCharacterBase = GameObjectBase.extend({
 
     _initDefaultData: function(){
         var self = this;
-        var DataMapByLvl = GameDefaultDataProviders.getCharDataByClassName(self._className);
-        if(DataMapByLvl !== null){
-            GameLog.c("CameCharacterBase::_initDefaultData()   className=%s", self._className);
+        var res = false;
+        self._GameObjectID = GameDefaultDataProviders.getCharIDByClassName(self._className);
+        if(self._GameObjectID !== INDEX_NONE){
+            self.CharDataMapByLvl = GameDefaultDataProviders.getCharDataByID(self._GameObjectID);
+            if(self.CharDataMapByLvl !== null || self.CharDataMapByLvl.isEmpty()){
+                var keys = self.CharDataMapByLvl.keys();
+                if(keys.length > 0){
+                    keys.sort();
+                    self._GameObjectLvl = keys[0];
+                    self._GameObjectLvlMax = keys.length;
 
-//            self._GameObjLocName = defaultData[CharDataStruct.iID];
-//            _GameObjectID: -1,
-//            _GameObjectLvl: 0,
-//            _sResPngPath: "",
-//            _sResPlistPath: "",
-//            _sAnimResPrefix: "",
-//            _MyRootSpritePath: "",
-//            _GameObjectLvlMax: 0,
-//            _fDefaultHealth: 1000,
-//            _fDefaultGroundSpeed: 0,
+
+                    self._bBase = (self.CharDataMapByLvl.get(self._GameObjectLvl))[CharDataStruct.bBase];
+
+                    for(var i in keys){
+                        var lvlData = self.CharDataMapByLvl.get(keys[i]);
+                        cc.spriteFrameCache.addSpriteFrames(lvlData[CharDataStruct.sResPList], lvlData[CharDataStruct.sResPng]);
+                    }
+                    self._sAnimResPrefix = (self.CharDataMapByLvl.get(self._GameObjectLvl))[CharDataStruct.sAnimResPrefix];
+                    self._fSpriteOffsetX = (self.CharDataMapByLvl.get(self._GameObjectLvl))[CharDataStruct.fSpriteOffsetX];
+                    self._fSpriteOffsetY = (self.CharDataMapByLvl.get(self._GameObjectLvl))[CharDataStruct.fSpriteOffsetY];
+                    self._GameObjLocName = (self.CharDataMapByLvl.get(self._GameObjectLvl))[CharDataStruct.sLocName];
+                    self._fDefaultHealth = (self.CharDataMapByLvl.get(self._GameObjectLvl))[CharDataStruct.fDefaultHP];
+                    self._bAirUnit = (self.CharDataMapByLvl.get(self._GameObjectLvl))[CharDataStruct.bFlyUnit];
+                    self._fDefaultGroundSpeed = (self.CharDataMapByLvl.get(self._GameObjectLvl))[CharDataStruct.fDefaultGroundSpeed];
+                    self._fDefaultAirSpeed = (self.CharDataMapByLvl.get(self._GameObjectLvl))[CharDataStruct.fDefaultAirSpeed];
+
+                    res = true;
+                }
+            }
         }
-        else{
-            GameLog.w("CameCharacterBase::_initDefaultData() failed.   className=%s", self._className);
-        }
+
+        return res;
     },
 
     init: function () {

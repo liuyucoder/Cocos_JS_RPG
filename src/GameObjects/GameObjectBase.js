@@ -55,14 +55,17 @@ var GameObjectBase = cc.Node.extend({
      */
     _GameObjLocName: "",
     _GameObjectID: -1,
-    _GameObjectLvl: 0,
-    _sResPngPath: "",
-    _sResPlistPath: "",
-    _sAnimResPrefix: "",
-    _MyRootSpritePath: "",
+    _GameObjectLvl: 1,
+    _bBase: false,
     _GameObjectLvlMax: 0,
-    _fDefaultHealth: 1000,
+    _sAnimResPrefix: "",
+    _fSpriteOffsetX: 0,
+    _fSpriteOffsetY: 0,
+    _MyRootSpritePath: "",
+    _fDefaultHealth: 1,
+    _bAirUnit: false,
     _fDefaultGroundSpeed: 0,
+    _fDefaultAirSpeed: 0,
 
     /**
      * GameObject
@@ -101,6 +104,10 @@ var GameObjectBase = cc.Node.extend({
     _bUseFrameAnimation: true,
     _MyRootSprite: null,
     _CurrentAction: null,
+
+    levelUp: function(NewLvl){
+
+    },
 
     /**
      * ===================  Draw information function  ===================Begin
@@ -168,14 +175,18 @@ var GameObjectBase = cc.Node.extend({
         this._super();
 
         //! 1: Load data from csv
-        this._initDefaultData();
-
-        //! 2: Init Render Info
-        this._initRenderObjInfo();
+        if(this._initDefaultData()){
+            //! 2: Init Render Info
+            this._initRenderObjInfo();
+        }
+        else{
+            GameLog.w("GameObjectBase::_initDefaultData() failed.   className=%s", this._className);
+        }
     },
 
     _initDefaultData: function(){
         GameLog.c("GameObjectBase::_initDefaultData()");
+        return false;
     },
 
     /**

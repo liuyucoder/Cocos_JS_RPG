@@ -14,7 +14,12 @@ var CharDataStruct = {
     sAnimResPrefix: 6,
     fSpriteOffsetX: 7,
     fSpriteOffsetY: 8,
-    sLocName: 9
+    sLocName: 9,
+    fDefaultHP: 10,
+    bFlyUnit: 11,
+    fDefaultGroundSpeed: 12,
+    fDefaultAirSpeed:13
+
 //    iGoldNeed: 4,
 //    iFoodNeed: 5,
 //    iSoulNeed: 6,
@@ -45,6 +50,20 @@ var CharDataStruct = {
 //    sMoveEffect: 29,
 };
 
+//! character animation data struct
+var CharAnimDataStruct = {
+    sPrefixName: 0,
+    sActionName: 1,
+    bWithDir: 2,
+    iDefaultDir: 3,
+    iFrameNum: 4,
+    fFrameInterval: 5,
+    iLoop: 6,
+    iFileNum: 7,
+    iMulAnim: 8,
+    iEffectFrame: 9
+};
+
 
 var GameDefaultDataProviders = {
     initOver: false,
@@ -57,10 +76,13 @@ var GameDefaultDataProviders = {
         }
         switch (url){
             case resCSV.CharInfo:
-                self.dataProviders[resCSV.CharInfo] = self._csvDataParse(data, self._charDataParse, url);
+                self.dataProviders[resCSV.CharInfo] = self._csvGameObjDataParse(data, self._charDataParse, url);
                 break;
             case resCSV.BuildInfo:
-                self.dataProviders[resCSV.BuildInfo] = self._csvDataParse(data, self._buildDataParse, url);
+                self.dataProviders[resCSV.BuildInfo] = self._csvGameObjDataParse(data, self._buildDataParse, url);
+                break;
+            case resCSV.AnimInfo:
+                self.dataProviders[resCSV.AnimInfo] = self._csvAnimDataParse(data, self._animDataParse, url);
                 break;
             default :
                 GameLog.w("initDataProvider() faild.   Url=", url);
@@ -80,35 +102,11 @@ var GameDefaultDataProviders = {
         if(self.initOver)
         {
             CSV.releaseAll();
-
-            //! test code
-//            for(var i in self.dataProviders)
-//            {
-//                GameLog.c("#### %s #### Begin", i);
-//                var mapByClassName = self.dataProviders[i].dataMapByClassName;
-//                var mapByID = self.dataProviders[i].dataMapByID;
-//
-//                var arrMapNames = mapByClassName.keys();
-//                for(var m= 0; m < arrMapNames.length; m++){
-//                    var id = this._getIDByClassName(i, arrMapNames[m]);
-//                    if(id != INDEX_NONE)
-//                    {
-//                        GameLog.c("#### ClassName=%s  ID=%s", arrMapNames[m], id);
-//                        var dataGroup = this._getDataByID(i, id);
-//                        var arr2 = dataGroup.keys();
-//                        for(var n = 0; n < arr2.length; n++)
-//                        {
-//                            GameLog.c("## Lvl=%s  Data=%s", arr2[n], dataGroup.get(arr2[n]));
-//                        }
-//                    }
-//                }
-//
-//                GameLog.c("#### %s #### End", i);
-//            }
         }
     },
 
-    _csvDataParse: function(data, optionF, url){
+    //******************************************************* Game Object Data
+    _csvGameObjDataParse: function(data, optionF, url){
         var targetStr = "\r\n";
         var targetStr1 = ",";
         var startIdx = -1;
@@ -169,7 +167,7 @@ var GameDefaultDataProviders = {
             //! Insert Data Map by ID
             if(dataMapByID.containsKey(dataID)){
                 if(dataMapByID.get(dataID).containsKey(dataLvl)){
-                    GameLog.w("_csvDataParse()  Parse the same Level data.  URL=%s, ID=%s, Level=%s", url, dataID, dataLvl);
+                    GameLog.w("_csvGameObjDataParse()  Parse the same Level data.  URL=%s, ID=%s, Level=%s", url, dataID, dataLvl);
                 }
                 else{
                     dataMapByID.get(dataID).put(dataLvl, dataLine);
@@ -203,6 +201,7 @@ var GameDefaultDataProviders = {
 //                case CharDataStruct.sResPList:
 //                case CharDataStruct.sLocName:
                 case CharDataStruct.bBase:
+                case CharDataStruct.bFlyUnit:
                     datas[CharDataStruct[i]] = Boolean(datas[CharDataStruct[i]]);
                     break;
                 case CharDataStruct.iID:
@@ -211,6 +210,9 @@ var GameDefaultDataProviders = {
                     break;
                 case CharDataStruct.fSpriteOffsetX:
                 case CharDataStruct.fSpriteOffsetY:
+                case CharDataStruct.fDefaultHP:
+                case CharDataStruct.fDefaultGroundSpeed:
+                case CharDataStruct.fDefaultAirSpeed:
                     datas[CharDataStruct[i]] = parseFloat(datas[CharDataStruct[i]]);
                     break;
             }
@@ -267,6 +269,117 @@ var GameDefaultDataProviders = {
             GameLog.w("###  _getIDByClassName() failed.  DataProviderType=%s ClassName=%s", DataProviderType, ClassName);
 
         return res;
+    },
+
+    //******************************************************* Animaction Data
+    _csvAnimDataParse: function(data, optionF, url){
+        var targetStr = "\r\n";
+        var targetStr1 = ",";
+        var startIdx = -1;
+        var dataIdx = -1;
+
+        var animPrefixName = "";
+        var animActionName = "";
+        var animDataMapByPrefixName = new Map();
+
+        //! remove first line
+        startIdx = data.toString().trim().indexOf(targetStr);
+        data = data.substring(startIdx + targetStr.length, data.length);
+
+        while(data !== ""){
+            var dataStr = "";
+            startIdx = data.toString().indexOf(targetStr);
+            if(startIdx !== -1){
+                dataStr = data.substring(0, startIdx);
+                data = data.substring(startIdx + targetStr.length, data.length);
+            }else{
+                dataStr = data;
+                data = "";
+            }
+
+            //! parse line datas
+            var datas = [];
+            var dataValue = "";
+            do{
+                dataIdx = dataStr.indexOf(targetStr1);
+                if(dataIdx != -1){
+                    dataValue = dataStr.substring(0, dataIdx);
+                    dataStr = dataStr.substring(dataIdx + targetStr1.length, dataStr.length);
+                }
+                else{
+                    dataValue = dataStr;
+                    dataStr = "";
+                }
+                datas.push(dataValue);
+            }while(dataStr.length !== 0);
+
+            var dataLine = optionF(datas);
+            if(dataLine === null){
+                continue;
+            }
+            //! Index 0 is Animation Prefix Name
+            //! Index 1 is Animation Action Name
+            animPrefixName = dataLine[0];
+            animActionName = dataLine[1];
+
+            //! Insert Data Map by Animation Prefix Name
+            if(animDataMapByPrefixName.containsKey(animPrefixName)){
+                if(animDataMapByPrefixName.get(animPrefixName).containsKey(animActionName)){
+                    GameLog.w("_csvAnimDataParse()  Parse the same Action data.  URL=%s, AnimPrefixName=%s, ActionName=%s", url, animPrefixName, animActionName);
+                }
+                else{
+                    animDataMapByPrefixName.get(animPrefixName).put(animActionName, dataLine);
+                }
+            }
+            else{
+                var dataGroupMap = new Map();
+                dataGroupMap.put(animActionName, dataLine);
+                animDataMapByPrefixName.put(animPrefixName, dataGroupMap);
+            }
+        }
+
+        var dataTaker = {};
+        dataTaker.dataMapByClassName = animDataMapByPrefixName;
+
+        return dataTaker;
+    },
+
+    _animDataParse: function(datas){
+        for(var i in CharAnimDataStruct){
+            if(CharAnimDataStruct[i] >= datas.length){
+                GameLog.w("### _animDataParse()  Animation Data do not match CharAnimDataStruct.    AnimPrefixName=%s", datas[0], CharAnimDataStruct[i], datas.length);
+//                var temp = "";
+//                temp = parseInt(temp);
+//                GameLog.c("@@@1", temp);
+//                temp = Boolean(temp);
+//                GameLog.c("@@@2", temp);
+                return null;
+            }
+
+            switch (CharAnimDataStruct[i]){
+                case CharAnimDataStruct.bWithDir:
+                    datas[CharAnimDataStruct[i]] = Boolean(datas[CharAnimDataStruct[i]]);
+                    break;
+                case CharAnimDataStruct.iDefaultDir:
+                case CharAnimDataStruct.iFrameNum:
+                case CharAnimDataStruct.iLoop:
+                case CharAnimDataStruct.iFileNum:
+                case CharAnimDataStruct.iMulAnim:
+                case CharAnimDataStruct.iEffectFrame:
+                    datas[CharAnimDataStruct[i]] = parseInt(datas[CharAnimDataStruct[i]]);
+                    break;
+                case CharAnimDataStruct.fFrameInterval:
+                    datas[CharAnimDataStruct[i]] = parseFloat(datas[CharAnimDataStruct[i]]);
+                    break;
+            }
+        }
+
+        return datas;
+    },
+
+    getAnimDataByPrefix: function(PrefixName){
+        var self = this;
+        return self._getDataByClassName(resCSV.AnimInfo, PrefixName);
     },
 
     _getDataByClassName: function(DataProviderType, ClassName){

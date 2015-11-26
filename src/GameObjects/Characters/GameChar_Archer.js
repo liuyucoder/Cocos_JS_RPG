@@ -6,15 +6,12 @@ var GameChar_Archer = CameCharacterBase.extend({
     _className: "GameChar_Archer",
 
     ctor:function(){
-        cc.spriteFrameCache.addSpriteFrames(resPlist_Chars.Char0002_p, resPlist_Chars.Char0002_t);
         this._super();
     },
 
     /**
      * Animations
      */
-    _sResPlistPath: "res/Characters/Sh8.plist",
-    _sAnimResPrefix: "Sh8",
     //Idle
     _frameCountIdle: 2,
     _animateIntervalIdle: 0.75,
