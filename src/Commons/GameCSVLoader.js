@@ -53,7 +53,7 @@ var CharDataStruct = {
 //! character animation data struct
 var CharAnimDataStruct = {
     sPrefixName: 0,
-    sActionName: 1,
+    sActionType: 1,
     bWithDir: 2,
     iDefaultDir: 3,
     iFrameNum: 4,
@@ -61,7 +61,8 @@ var CharAnimDataStruct = {
     iLoop: 6,
     iFileNum: 7,
     iMulAnim: 8,
-    iEffectFrame: 9
+    iEffectFrame: 9,
+    iOwnerID: 10
 };
 
 
@@ -318,7 +319,7 @@ var GameDefaultDataProviders = {
                 continue;
             }
             //! Index 0 is Animation Prefix Name
-            //! Index 1 is Animation Action Name
+            //! Index 1 is Animation Action Tpye
             animPrefixName = dataLine[0];
             animActionName = dataLine[1];
 
@@ -339,7 +340,7 @@ var GameDefaultDataProviders = {
         }
 
         var dataTaker = {};
-        dataTaker.dataMapByClassName = animDataMapByPrefixName;
+        dataTaker.dataMapByID = animDataMapByPrefixName;
 
         return dataTaker;
     },
@@ -348,17 +349,12 @@ var GameDefaultDataProviders = {
         for(var i in CharAnimDataStruct){
             if(CharAnimDataStruct[i] >= datas.length){
                 GameLog.w("### _animDataParse()  Animation Data do not match CharAnimDataStruct.    AnimPrefixName=%s", datas[0], CharAnimDataStruct[i], datas.length);
-//                var temp = "";
-//                temp = parseInt(temp);
-//                GameLog.c("@@@1", temp);
-//                temp = Boolean(temp);
-//                GameLog.c("@@@2", temp);
                 return null;
             }
 
             switch (CharAnimDataStruct[i]){
                 case CharAnimDataStruct.bWithDir:
-                    datas[CharAnimDataStruct[i]] = Boolean(datas[CharAnimDataStruct[i]]);
+                    datas[CharAnimDataStruct[i]] = !Boolean(datas[CharAnimDataStruct[i]]);
                     break;
                 case CharAnimDataStruct.iDefaultDir:
                 case CharAnimDataStruct.iFrameNum:
@@ -366,6 +362,7 @@ var GameDefaultDataProviders = {
                 case CharAnimDataStruct.iFileNum:
                 case CharAnimDataStruct.iMulAnim:
                 case CharAnimDataStruct.iEffectFrame:
+                case CharAnimDataStruct.iOwnerID:
                     datas[CharAnimDataStruct[i]] = parseInt(datas[CharAnimDataStruct[i]]);
                     break;
                 case CharAnimDataStruct.fFrameInterval:
@@ -379,7 +376,7 @@ var GameDefaultDataProviders = {
 
     getAnimDataByPrefix: function(PrefixName){
         var self = this;
-        return self._getDataByClassName(resCSV.AnimInfo, PrefixName);
+        return self._getDataByID(resCSV.AnimInfo, PrefixName);
     },
 
     _getDataByClassName: function(DataProviderType, ClassName){

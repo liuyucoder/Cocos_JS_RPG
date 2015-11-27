@@ -39,12 +39,21 @@ var EResDirectionId = {
     ERDI_Top: 3
 };
 
-var EGameObjectAnimIdx ={
-    EGOAI_Idle: 0,
-    EGOAI_Walk: 1,
-    EGOAI_Attack1: 2,
-    EGOAI_Attack2: 3,
-    EGOAI_Victory: 9
+//var EGameObjectActionType ={
+//    EGOAT_Idle: 0,
+//    EGOAT_Walk: 1,
+//    EGOAT_Attack1: 2,
+//    EGOAT_Attack2: 3,
+//    EGOAT_Victory: 9
+//};
+
+
+var EGameObjectActionType ={
+    idle: 0,
+    walk: 1,
+    attack: 2,
+    attack2: 3,
+    victory: 9
 };
 
 var GameObjectBase = cc.Node.extend({
@@ -106,7 +115,24 @@ var GameObjectBase = cc.Node.extend({
     _CurrentAction: null,
 
     levelUp: function(NewLvl){
+        var newLevel = -1;
+        if(NewLvl === undefined){
+            newLevel = this._GameObjectLvl + 1;
+        }
+        else{
+            newLevel = NewLvl;
+        }
 
+        if(newLevel > this._GameObjectLvlMax || newLevel <= this._GameObjectLvl){
+            GameLog.w("levelUp()  failed.  Level up to Lvl_%s failed.  New Level is unvalid.  (ClassName=%s)", newLevel, this._className);
+            return false;
+        }
+
+        this._GameObjectLvl = newLevel;
+
+        this._refreshDefaultData();
+        this._initRenderObjInfo();
+        return true;
     },
 
     /**
@@ -187,6 +213,14 @@ var GameObjectBase = cc.Node.extend({
     _initDefaultData: function(){
         GameLog.c("GameObjectBase::_initDefaultData()");
         return false;
+    },
+
+    _refreshDefaultData: function(){
+
+    },
+
+    _refreshAnimOffset: function(){
+
     },
 
     /**
