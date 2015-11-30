@@ -58,27 +58,34 @@ var CameCharacterBase = GameObjectBase.extend({
     _finishFrameAnimSeqs: function(){
         if(this._MyRootSprite == null)
         {
-            this._MyRootSprite = new cc.Sprite()
+            this._MyRootSprite = new cc.Sprite();
             this.addChild(this._MyRootSprite);
 
-            var markBg = new cc.Sprite(res.MarkBg);
-            markBg.setScale(0.25);
-            this.addChild(markBg);
-
-            this.setContentSize(cc.size(60, 100));
-            //! For debug
-            var drawNode = new cc.DrawNode();
-            var lb = cc.p(this.getPosition().x - this.getContentSize().width/2, this.getPosition().y - this.getContentSize().height/2);
-            var rt = cc.p(this.getPosition().x + this.getContentSize().width/2, this.getPosition().y + this.getContentSize().height/2);
-            //GameLog.c("####  (%s, %s)   (%s, %s)", lb.x, lb.y, rt.x, rt.y);
-            drawNode.drawRect(lb, rt, cc.color(0, 255, 0, 0), 5, cc.color(0, 255, 0, 255));
-            this.addChild(drawNode);
+            if(bDrawObjRect){
+                var markBg = new cc.Sprite(res.MarkBg);
+                markBg.setScale(0.25);
+                this.addChild(markBg);
+            }
 
             this.scheduleUpdate();
         }
 
         if(this._CurrentAction != null && this._MyRootSprite != null){
             this._MyRootSprite.setPosition(this._fSpriteOffsetX, this._fSpriteOffsetY);
+
+            this.setRectPtLB(cc.p(this.getPosition().x - this.getContentSize().width/2, this.getPosition().y));
+            this.setRectPtRT(cc.p(this.getPosition().x + this.getContentSize().width/2, this.getPosition().y + this.getContentSize().height));
+
+            //! For debug
+            if(bDrawObjRect){
+                var drawNode = new cc.DrawNode();
+                //var lb = cc.p(this._MyRootSprite.getPosition().x - this.getContentSize().width/2, this._MyRootSprite.getPosition().y - this.getContentSize().height/2);
+                //var rt = cc.p(this._MyRootSprite.getPosition().x + this.getContentSize().width/2, this._MyRootSprite.getPosition().y + this.getContentSize().height/2);
+                //GameLog.c("####  (%s, %s)   (%s, %s)", lb.x, lb.y, rt.x, rt.y);
+                drawNode.drawRect(this.getRectPtLB(), this.getRectPtRT(), cc.color(0, 255, 0, 0), 5, cc.color(0, 255, 0, 255));
+                this.addChild(drawNode);
+            }
+
             this._MyRootSprite.runAction(cc.repeatForever(this._CurrentAction));
         }
     },
@@ -271,7 +278,7 @@ var CameCharacterBase = GameObjectBase.extend({
     },
 
     update:function(){
-        GameLog.c("CameCharacterBase::update().");
+        //GameLog.c("CameCharacterBase::update().");
     },
 
     _initDefaultData: function(){

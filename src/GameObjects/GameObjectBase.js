@@ -2,6 +2,8 @@
  * Created by yu.liu on 2015/10/28.
  */
 
+var bDrawObjRect = false;
+
 var EGameObjectType = {
     EGOT_Building: 0,
     EGOT_Character:1,
@@ -82,6 +84,30 @@ var GameObjectBase = cc.Node.extend({
     _eGameObjectType: EGameObjectType.EGOT_Unknown,
 
     //
+    _RectPt_LB: null,
+    _RectPt_RT: null,
+    setRectPtLB: function(pt){
+        this._RectPt_LB = pt;
+    },
+    setRectPtRT: function(pt){
+        this._RectPt_RT = pt;
+    },
+    getRectPtLB: function(){
+        return this._RectPt_LB;
+    },
+    getRectPtRT: function(){
+        return this._RectPt_RT;
+    },
+    getRootSpriteOffsetPT: function(){
+        return cc.p(this._fSpriteOffsetX, this._fSpriteOffsetY);
+    },
+    getObjValidRect: function(){
+        var s = this.getContentSize();
+        //var rect = cc.rect(-s.width/2 + this._fSpriteOffsetX, -s.height/2 + this._fSpriteOffsetY, s.width, s.height);
+        //return cc.rect(-s.width/2 + this._fSpriteOffsetX, -s.height/2 + this._fSpriteOffsetY, s.width, s.height);
+        return cc.rect(-s.width/2, 0, s.width, s.height);
+    },
+    //
     _iDefaultLvl: -1,
     _eGameObjectDirection: EGameObjectDirection.EGOD_Down,
     _eTeamNum: ETeamNum.ETT_Unknown,
@@ -107,12 +133,18 @@ var GameObjectBase = cc.Node.extend({
     _HPBg: null,
     _HPBarHeight: 20,
     _ObjShadow: null,
+    _SelectShadow: null,
     //
     _Vehicle: null,
 
     //
     _bUseFrameAnimation: true,
     _MyRootSprite: null,
+    getRootSpriteLoc: function(){
+        if(this._MyRootSprite)
+            return this._MyRootSprite.getPosition();
+        return this.getPosition();
+    },
     _CurrentAction: null,
 
     levelUp: function(NewLvl){
@@ -149,6 +181,18 @@ var GameObjectBase = cc.Node.extend({
     },
 
     _initHPBar: function(){
+        if(this._HPBg === null)
+        {
+            this._HPBg = new cc.Sprite(res.HPProgressBar);
+            this._HPBg.setScale(0.15);
+            this._HPBg.setAnchorPoint(cc.p(0, 0));
+            this._HPBg.setPosition(-this.getContentSize().width/2 + this._fSpriteOffsetX - 5, this.getContentSize().height + 20);
+            this.addChild(this._HPBg);
+
+//            var hp = new cc.Sprite(res.HPProgressBar);
+//            hp.setAnchorPoint(cc.p(0, 0));
+//            this._HPBg.addChild(hp);
+        }
     },
 
     drawBloodBar: function(bShow){
@@ -159,6 +203,22 @@ var GameObjectBase = cc.Node.extend({
     },
 
     _initShadow: function(){
+        if(this._SelectShadow === null)
+        {
+            this._SelectShadow = new cc.Sprite();
+            this.addChild(this._SelectShadow);
+            this._SelectShadow.setVisible(false);
+        }
+    },
+
+    showShadow: function(bShow){
+        if(this._SelectShadow){
+            this._SelectShadow.setVisible(bShow);
+        }
+    },
+
+    onSelected: function(bSelected){
+        this.showShadow(bSelected);
     },
     /**
      * ====================================================================End
@@ -207,6 +267,7 @@ var GameObjectBase = cc.Node.extend({
 
         //! 1: Load data from csv
         if(this._initDefaultData()){
+            this.setContentSize(cc.size(70, 100));
             //! 2: Init Render Info
             this._initRenderObjInfo();
         }

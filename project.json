@@ -24,12 +24,12 @@
         "src/GameObjects/Characters/GameChar_InfantryMan.js",
         "src/GameObjects/Characters/GameChar_Archer.js",
 
+        "src/GameScenes/GameSceneBase.js",
+
         "src/GameLayers/GameLayerBase.js",
         "src/GameLayers/GameLayerInputBase.js",
 
         "src/GameLayers/GameLayer_InputTest.js",
-
-        "src/GameScenes/GameSceneBase.js",
 
         "src/app.js"
     ]

@@ -9,7 +9,14 @@ var res = {
     HPProgressBar: "res/Commons/ProgressBar.png",
     HPProgressBarBg: "res/Commons/ProgressBarBg.png",
     TempBg: "res/Commons/pvp2048.png",
-    MarkBg: "res/Commons/iconbg_mark.png"
+    MarkBg: "res/Commons/iconbg_mark.png",
+    SelectShadow00: "res/Commons/hero_selected_0.png",
+    SelectShadow01: "res/Commons/hero_selected_1.png",
+    SelectShadow02: "res/Commons/hero_selected_2.png",
+    SelectShadow03: "res/Commons/hero_selected_3.png",
+    SelectShadow04: "res/Commons/hero_selected_4.png",
+    SelectShadow05: "res/Commons/hero_selected_5.png",
+    SelectShadow06: "res/Commons/hero_selected_6.png"
 };
 
 var resCommon = {

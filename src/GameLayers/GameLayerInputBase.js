@@ -19,6 +19,10 @@ var GameLayerInputBase = cc.Layer.extend({
 
     setParent: function (parent) {
         this._super(parent);
+
+        if( parent instanceof GameSceneBase){
+            this._GameSceneInstance = GameSceneBase(parent);
+        }
     },
 
     _registerEventListener: function(){

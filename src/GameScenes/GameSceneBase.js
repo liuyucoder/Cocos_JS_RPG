@@ -60,6 +60,22 @@ var GameSceneBase = cc.Scene.extend({
         }
     },
 
+    _SelectObj: null,
+    onSelectedObj: function(obj, loc){
+        if(obj){
+            this._SelectObj = obj;
+            this._SelectObj.onSelected(true);
+            GameLog.c("@@@  OnSelected(true) X=%s, Y=%s", loc.x, loc.y);
+        }
+        else{
+            if(this._SelectObj){
+                this._SelectObj.onSelected(false);
+                this._SelectObj = obj;
+                GameLog.c("@@@  OnSelected(false) X=%s, Y=%s", loc.x, loc.y);
+            }
+        }
+    },
+
     _GameInfo: null,
     _PlayerInfo: null,
     _Heroes: null,
