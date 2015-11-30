@@ -5,8 +5,8 @@
 var GameChar_Archer = CameCharacterBase.extend({
     _className: "GameChar_Archer",
 
-    ctor:function(){
-        this._super();
+    ctor:function(defLvl){
+        this._super(defLvl);
     },
 
     /**

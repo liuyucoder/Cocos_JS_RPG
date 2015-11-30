@@ -61,6 +61,19 @@ var CameCharacterBase = GameObjectBase.extend({
             this._MyRootSprite = new cc.Sprite()
             this.addChild(this._MyRootSprite);
 
+            var markBg = new cc.Sprite(res.MarkBg);
+            markBg.setScale(0.25);
+            this.addChild(markBg);
+
+            this.setContentSize(cc.size(60, 100));
+            //! For debug
+            var drawNode = new cc.DrawNode();
+            var lb = cc.p(this.getPosition().x - this.getContentSize().width/2, this.getPosition().y - this.getContentSize().height/2);
+            var rt = cc.p(this.getPosition().x + this.getContentSize().width/2, this.getPosition().y + this.getContentSize().height/2);
+            //GameLog.c("####  (%s, %s)   (%s, %s)", lb.x, lb.y, rt.x, rt.y);
+            drawNode.drawRect(lb, rt, cc.color(0, 255, 0, 0), 5, cc.color(0, 255, 0, 255));
+            this.addChild(drawNode);
+
             this.scheduleUpdate();
         }
 
@@ -187,7 +200,7 @@ var CameCharacterBase = GameObjectBase.extend({
                     var spriteFrame = cc.spriteFrameCache.getSpriteFrame(frameName);
                     if(spriteFrame == null)
                     {
-                        GameLog.w("Cant get Sprite Frame by &s. AnimType=%s FrameCount=%s", frameName, AnimType, FrameCount);
+                        GameLog.w("Cant get Sprite Frame by %s. AnimType=%s FrameCount=%s", frameName, AnimType, FrameCount);
                         continue;
                     }
                     animation.addSpriteFrame(spriteFrame);
@@ -248,8 +261,8 @@ var CameCharacterBase = GameObjectBase.extend({
 
     },
 
-    ctor:function() {
-        this._super();
+    ctor:function(defLvl) {
+        this._super(defLvl);
     },
 
     onEnter:function () {
@@ -271,8 +284,18 @@ var CameCharacterBase = GameObjectBase.extend({
                 var keys = self.CharDataMapByLvl.keys();
                 if(keys.length > 0){
                     keys.sort();
-                    self._GameObjectLvl = keys[0];
+
                     self._GameObjectLvlMax = keys.length;
+
+                    if(self._iDefaultLvl > 0){
+                        if(self._iDefaultLvl > self._GameObjectLvlMax){
+                            self._iDefaultLvl = self._GameObjectLvlMax;
+                        }
+                        self._GameObjectLvl = self._iDefaultLvl;
+                    }
+                    else{
+                        self._GameObjectLvl = keys[0];
+                    }
 
                     for(var i in keys){
                         var lvlData = self.CharDataMapByLvl.get(keys[i]);

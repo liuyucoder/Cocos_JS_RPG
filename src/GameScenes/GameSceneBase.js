@@ -14,6 +14,7 @@ var EGameStatus = {
 };
 
 var GameSceneBase = cc.Scene.extend({
+    _className: "GameSceneBase",
     /**
      * Constructor function, override it to extend the construction behavior, remember to call "this._super()" in the extended "ctor" function.
      * @function
@@ -61,6 +62,7 @@ var GameSceneBase = cc.Scene.extend({
 
     _GameInfo: null,
     _PlayerInfo: null,
+    _Heroes: null,
 
     _layerBg: null,
     _layerGamePlay: null,
@@ -69,11 +71,28 @@ var GameSceneBase = cc.Scene.extend({
     _layerMask: null,
 
     _initGameSceneLayers: function(){
-        this._initLayer_Background();
-        this._initLayer_GamePlay();
-        this._initLayer_PlayerInput();
-        this._initLayer_UI();
-        this._initLayer_Mask();
+        this._layerBg = this._initLayer_Background();
+        if(this._layerBg){
+            this.addChild(this._layerBg);
+        }
+        this._layerGamePlay = this._initLayer_GamePlay();
+        if(this._layerGamePlay){
+            this.addChild(this._layerGamePlay);
+        }
+        this._layerInput = this._initLayer_PlayerInput();
+        if(this._layerInput){
+            this.addChild(this._layerInput);
+        }
+        this._layerUI = this._initLayer_UI();
+        if(this._layerUI){
+            this.addChild(this._layerUI);
+        }
+        this._layerMask = this._initLayer_Mask();
+        if(this._layerMask){
+            this.addChild(this._layerMask);
+        }
+
+        this._initLayersFinish();
     },
 
     _initGameInfo: function(){
@@ -86,22 +105,61 @@ var GameSceneBase = cc.Scene.extend({
 
     _initLayer_Background: function(){
         GameLog.c("GameSceneBase _initLayer_Background()");
+        return null;
     },
 
     _initLayer_GamePlay: function(){
         GameLog.c("GameSceneBase _initLayer_GamePlay()");
+        return null;
     },
 
     _initLayer_PlayerInput: function(){
         GameLog.c("GameSceneBase _initLayer_PlayerInput()");
+        return null;
     },
 
     _initLayer_UI: function(){
         GameLog.c("GameSceneBase _initLayer_UI()");
+        return null;
     },
 
     _initLayer_Mask: function(){
         GameLog.c("GameSceneBase _initLayer_Mask()");
-    }
+        return null;
+    },
 
+
+    _createRoles: function(){
+        GameLog.c("GameSceneBase _createRoles()");
+    },
+
+    getRoles: function(){
+        return this._Heroes;
+    },
+
+    _initLayersFinish: function(){
+        if(this._layerBg == null){
+            GameLog.w("### _layerBg is null");
+        }
+        if(this._layerGamePlay == null){
+            GameLog.w("### _layerGamePlay is null");
+        }
+        if(this._layerInput == null){
+            GameLog.w("### _layerInput is null");
+        }
+        if(this._layerUI == null){
+            GameLog.w("### _layerUI is null");
+        }
+        if(this._layerMask == null){
+            GameLog.w("### _layerMask is null");
+        }
+
+        GameLog.c("GameSceneBase _initLayersFinish()");
+
+        this._createRoles();
+    },
+
+    gameSceneBaseTestFun: function(){
+        GameLog.c("***********");
+    }
 })

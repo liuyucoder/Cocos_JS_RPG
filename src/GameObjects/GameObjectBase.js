@@ -82,6 +82,7 @@ var GameObjectBase = cc.Node.extend({
     _eGameObjectType: EGameObjectType.EGOT_Unknown,
 
     //
+    _iDefaultLvl: -1,
     _eGameObjectDirection: EGameObjectDirection.EGOD_Down,
     _eTeamNum: ETeamNum.ETT_Unknown,
     _bPlayer: false,
@@ -101,10 +102,10 @@ var GameObjectBase = cc.Node.extend({
 
     //
     _bRenderObjInfo: false,
-    _bDrawBloodBar: false,
-    _BloodBar: null,
-    _BloodBarBg: null,
-    _BloodBarHeight: 20,
+    _bDrawHPBar: false,
+    _HPBar: null,
+    _HPBg: null,
+    _HPBarHeight: 20,
     _ObjShadow: null,
     //
     _Vehicle: null,
@@ -144,16 +145,16 @@ var GameObjectBase = cc.Node.extend({
     _initRenderObjInfo: function(){
         this._initShadow();
         this._initFrameAnimSeqs();
-        this._initBloodBar();
+        this._initHPBar();
     },
 
-    _initBloodBar: function(){
+    _initHPBar: function(){
     },
 
     drawBloodBar: function(bShow){
-        if(this._BloodBarBg)
+        if(this._HPBg)
         {
-            this._BloodBarBg.setVisible(bShow);
+            this._HPBg.setVisible(bShow);
         }
     },
 
@@ -197,7 +198,11 @@ var GameObjectBase = cc.Node.extend({
      * Constructor function, override it to extend the construction behavior, remember to call "this._super()" in the extended "ctor" function.
      * @function
      */
-    ctor: function(){
+    ctor: function(defLvl){
+        if(defLvl !== undefined){
+            this._iDefaultLvl = defLvl;
+        }
+
         this._super();
 
         //! 1: Load data from csv

@@ -22,32 +22,58 @@ var HelloWorldLayer = GameLayerBase.extend({
 var HelloWorldScene = GameSceneBase.extend({
     onEnter:function () {
         this._super();
-
-        var size = cc.director.getWinSize();
-        var GameObj = new GameChar_InfantryMan();
-        GameObj.x = size.width / 4;
-        GameObj.y = size.height / 4;
-        this.addChild(GameObj);
     },
 
     _initLayer_Background: function(){
-        GameLog.c("HelloWorldScene _initLayer_Background()");
+        var bgSprite = new cc.Sprite(res.TempBg);
+        if(bgSprite){
+            var size = cc.director.getWinSize();
+            bgSprite.setPosition(cc.p(size.width / 2, size.height / 2));
+            return bgSprite;
+        }
+
+        return null;
     },
 
     _initLayer_GamePlay: function(){
-        GameLog.c("HelloWorldScene _initLayer_GamePlay()");
+        this._Heroes = new Array();
+        var gp = new cc.Layer();
+        return gp;
     },
 
     _initLayer_PlayerInput: function(){
-        GameLog.c("HelloWorldScene _initLayer_PlayerInput()");
+        var inputLayer = new GameLayer_InputTest();
+        return inputLayer;
     },
 
     _initLayer_UI: function(){
-        GameLog.c("HelloWorldScene _initLayer_UI()");
+        //GameLog.c("HelloWorldScene _initLayer_UI()");
     },
 
     _initLayer_Mask: function(){
-        GameLog.c("HelloWorldScene _initLayer_Mask()");
+        //GameLog.c("HelloWorldScene _initLayer_Mask()");
+    },
+
+    _createRoles: function(){
+        this._super();
+
+        if(this._layerGamePlay){
+            var size = cc.director.getWinSize();
+            var hero01 = new GameChar_InfantryMan(5);
+            hero01.x = size.width / 4;
+            hero01.y = size.height / 2;
+//            hero01.setContentSize(cc.size(100, 100));
+            this._layerGamePlay.addChild(hero01);
+
+            var hero02 = new GameChar_Archer(5);
+            hero02.x = size.width / 2;
+            hero02.y = size.height / 2;
+//            hero02.setContentSize(cc.size(100, 100));
+            this._layerGamePlay.addChild(hero02);
+
+            this._Heroes.push(hero01);
+            this._Heroes.push(hero02);
+        }
     }
 });
 
