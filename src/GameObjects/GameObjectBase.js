@@ -2,7 +2,7 @@
  * Created by yu.liu on 2015/10/28.
  */
 
-var bDrawObjRect = false;
+var bDrawObjRect = true;
 
 var EGameObjectType = {
     EGOT_Building: 0,
@@ -24,7 +24,7 @@ var EGameObjectState = {
     EGOS_Dying: 4
 };
 
-var EGameObjectDirection = {
+var EGameObjectAnimDirection = {
     EGOD_Down: 0,
     EGOD_RightDown: 1,
     EGOD_Right: 2,
@@ -108,8 +108,8 @@ var GameObjectBase = cc.Node.extend({
         return cc.rect(-s.width/2, 0, s.width, s.height);
     },
     //
-    _iDefaultLvl: -1,
-    _eGameObjectDirection: EGameObjectDirection.EGOD_Down,
+    //_iDefaultLvl: -1,
+    _eGameObjectDirection: EGameObjectAnimDirection.EGOD_Down,
     _eTeamNum: ETeamNum.ETT_Unknown,
     _bPlayer: false,
     _bNPC: false,
@@ -244,7 +244,137 @@ var GameObjectBase = cc.Node.extend({
     /**
      * ====================================================================End
      */
+    changeGameObjState: function(NewState){
+        this.stopAllActions();
 
+        if(this._eGameObjState === NewState){
+            return;
+        }
+        this._eGameObjState = NewState;
+        //GameLog.c("@@@ changeGameObjState()   NewState=", this._eGameObjState);
+    },
+
+    goToIdleState: function(AnimDir){
+        this.changeGameObjState(EGameObjectState.EGOS_Idle);
+    },
+
+    goToMoveState: function(AnimDir){
+        this.changeGameObjState(EGameObjectState.EGOS_Walk);
+    },
+
+
+    _MoveToPt: null,
+
+    moveTo: function(moveToPt){
+        this._MoveToPt = moveToPt;
+
+        var faceDir = this.getFaceDir(this._MoveToPt);
+        if(faceDir >= EGameObjectAnimDirection.EGOD_Down){
+            this.goToMoveState(faceDir);
+        }
+    },
+
+    moveFinishCallBack: function(){
+
+    },
+
+    flippedRootSpriteX: function(bFlipped){
+        if(this._MyRootSprite){
+            this._MyRootSprite.setFlippedX(bFlipped);
+        }
+    },
+
+    getFaceDir: function(pt){
+
+        var subX = pt.x - this.getPosition().x;
+        var subY = pt.y - this.getPosition().y;
+        var DirType = -1;
+        //! move to right
+        if(subX > 0){
+            this.flippedRootSpriteX(false);
+            var angleX = cc.pAngle(cc.p(1, 0), cc.p(subX, subY));
+            if(subY === 0 || angleX < 0.52){
+                //GameLog.c("### Face Right.");
+                DirType = EGameObjectAnimDirection.EGOD_Right;
+            }
+            else{
+                if(subY > 0){
+                    var angleY = cc.pAngle(cc.p(0, 1), cc.p(subX, subY));
+                    if(angleY < 0.52){
+                        //GameLog.c("### Face Top(R).");
+                        DirType = EGameObjectAnimDirection.EGOD_Top;
+                    }
+                    else{
+                        //GameLog.c("### Face Right Top.");
+                        DirType = EGameObjectAnimDirection.EGOD_RightTop;
+                    }
+                }
+                else{
+                    var angle_Y = cc.pAngle(cc.p(0, -1), cc.p(subX, subY));
+                    if(angle_Y < 0.52){
+                        //GameLog.c("### Face Down(R).");
+                        DirType = EGameObjectAnimDirection.EGOD_Down;
+                    }
+                    else{
+                        //GameLog.c("### Face Right Down.");
+                        DirType = EGameObjectAnimDirection.EGOD_RightDown;
+                    }
+                }
+            }
+        }
+        else if(subX < 0){
+            this.flippedRootSpriteX(true);
+            var angle_X = cc.pAngle(cc.p(-1, 0), cc.p(subX, subY));
+            if(subY === 0 || angle_X < 0.52){
+                //GameLog.c("### Face Left.");
+                DirType = EGameObjectAnimDirection.EGOD_Left;
+            }
+            else{
+                if(subY > 0){
+                    var angleY = cc.pAngle(cc.p(0, 1), cc.p(subX, subY));
+                    if(angleY < 0.52){
+                        //GameLog.c("### Face Top(L).");
+                        DirType = EGameObjectAnimDirection.EGOD_Top;
+                    }
+                    else{
+                        //GameLog.c("### Face Left Top.");
+                        DirType = EGameObjectAnimDirection.EGOD_LeftTop;
+                    }
+                }
+                else{
+                    var angle_Y = cc.pAngle(cc.p(0, -1), cc.p(subX, subY));
+                    if(angle_Y < 0.52){
+                        //GameLog.c("### Face Down(L).");
+                        DirType = EGameObjectAnimDirection.EGOD_Down;
+                    }
+                    else{
+                        //GameLog.c("### Face Left Down.");
+                        DirType = EGameObjectAnimDirection.EGOD_LeftDown;
+                    }
+                }
+            }
+        }
+        else{
+            this.flippedRootSpriteX(false);
+            if(subY > 0){
+                //GameLog.c("### move to Top.");
+                DirType = EGameObjectAnimDirection.EGOD_Top;
+            }
+            else if(subY < 0){
+                //GameLog.c("### move to Down.");
+                DirType = EGameObjectAnimDirection.EGOD_Down;
+            }
+            else{
+                GameLog.c("### no need to move.");
+            }
+        }
+
+        return DirType;
+    },
+
+    clearMoveInfo: function(){
+        this._MoveToPt = null;
+    },
 
     canTakeDamage: function(){
         return this._bTakeDamaged;

@@ -21,11 +21,6 @@ var GameLayer_InputTest = GameLayerInputBase.extend({
             //GameLog.c("@@@@1", locationInNode.x, locationInNode.y);
             for(var i in myHeroes){
                 var locationInNode = myHeroes[i].convertToNodeSpace(touch.getLocation());
-                //var s = myHeroes[i].getContentSize();
-                //var rect = cc.rect(-s.width/2 + myHeroes[i].getRootSpriteOffsetPT().x, -s.height/2 + myHeroes[i].getRootSpriteOffsetPT().y, s.width, s.height);
-                //var locationInNode = myHeroes[i]._MyRootSprite.convertToNodeSpace(touch.getLocation());
-                //var rect = cc.rect(myHeroes[i].getContentSize());
-                //var rect = cc.rect(-s.width/2, -s.height/2, s.width, s.height);
                 if (cc.rectContainsPoint(myHeroes[i].getObjValidRect(), locationInNode)) {
                     gameScene.onSelectedObj(myHeroes[i], touch.getLocation());
                     return true;

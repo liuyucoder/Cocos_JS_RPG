@@ -18,17 +18,5 @@ var GameChar_Archer = CameCharacterBase.extend({
             this._SelectShadow.setPosition(this._fSpriteOffsetX, 25);
             this._SelectShadow.setScale(0.5);
         }
-    },
-
-    /**
-     * Animations
-     */
-    _finishFrameAnimSeqs: function(){
-        this._CurrentAction = this._AnimationsInfo[EGameObjectActionType.idle].animateInstances[EGameObjectDirection.EGOD_Down];
-
-        this._super();
     }
-    /**
-     * Animations End
-     */
 })

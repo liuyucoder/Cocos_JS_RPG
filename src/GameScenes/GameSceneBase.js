@@ -60,20 +60,27 @@ var GameSceneBase = cc.Scene.extend({
         }
     },
 
-    _SelectObj: null,
+    _SelectedGameObj: null,
     onSelectedObj: function(obj, loc){
+        loc = this.convertToNodeSpace(loc);
         if(obj){
-            this._SelectObj = obj;
-            this._SelectObj.onSelected(true);
-            GameLog.c("@@@  OnSelected(true) X=%s, Y=%s", loc.x, loc.y);
-        }
-        else{
-            if(this._SelectObj){
-                this._SelectObj.onSelected(false);
-                this._SelectObj = obj;
-                GameLog.c("@@@  OnSelected(false) X=%s, Y=%s", loc.x, loc.y);
+            if(obj instanceof GameObjectBase){
+                this._SelectedGameObj = obj;
+                this._SelectedGameObj.onSelected(true);
             }
         }
+        else{
+            if(this._SelectedGameObj){
+                this._SelectedGameObj.onSelected(false);
+                if(this.canReachThePt(loc)){
+                    this._SelectedGameObj.moveTo(loc);
+                }
+                this._SelectedGameObj = null;
+            }
+        }
+    },
+    canReachThePt: function(pt){
+        return true;
     },
 
     _GameInfo: null,

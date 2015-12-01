@@ -70,7 +70,7 @@ var CameCharacterBase = GameObjectBase.extend({
             this.scheduleUpdate();
         }
 
-        if(this._CurrentAction != null && this._MyRootSprite != null){
+        if(this._MyRootSprite != null){
             this._MyRootSprite.setPosition(this._fSpriteOffsetX, this._fSpriteOffsetY);
 
             this.setRectPtLB(cc.p(this.getPosition().x - this.getContentSize().width/2, this.getPosition().y));
@@ -85,9 +85,9 @@ var CameCharacterBase = GameObjectBase.extend({
                 drawNode.drawRect(this.getRectPtLB(), this.getRectPtRT(), cc.color(0, 255, 0, 0), 5, cc.color(0, 255, 0, 255));
                 this.addChild(drawNode);
             }
-
-            this._MyRootSprite.runAction(cc.repeatForever(this._CurrentAction));
         }
+
+        this.goToIdleState();
     },
 
     _refreshAnimOffset: function(){
@@ -126,14 +126,14 @@ var CameCharacterBase = GameObjectBase.extend({
 //    _createCharFrameAnimSeq: function(AnimIdx, FrameCount, FrameInterval, SpecialAnimBinding, bRestoreOriginalFrame){
 //        var animationBinding = (SpecialAnimBinding == null ? [] : SpecialAnimBinding);
 //        if(SpecialAnimBinding == null){
-//            animationBinding[EGameObjectDirection.EGOD_Down] = EResDirectionId.ERDI_Down;
-//            animationBinding[EGameObjectDirection.EGOD_RightDown] = EResDirectionId.ERDI_Down;
-//            animationBinding[EGameObjectDirection.EGOD_Right] = EResDirectionId.ERDI_Right;
-//            animationBinding[EGameObjectDirection.EGOD_RightTop] = EResDirectionId.ERDI_Top;
-//            animationBinding[EGameObjectDirection.EGOD_Top] = EResDirectionId.ERDI_Top;
-//            animationBinding[EGameObjectDirection.EGOD_LeftTop] = EResDirectionId.ERDI_Top;
-//            animationBinding[EGameObjectDirection.EGOD_Left] = EResDirectionId.ERDI_Right;
-//            animationBinding[EGameObjectDirection.EGOD_LeftDown] = EResDirectionId.ERDI_Down;
+//            animationBinding[EGameObjectAnimDirection.EGOD_Down] = EResDirectionId.ERDI_Down;
+//            animationBinding[EGameObjectAnimDirection.EGOD_RightDown] = EResDirectionId.ERDI_Down;
+//            animationBinding[EGameObjectAnimDirection.EGOD_Right] = EResDirectionId.ERDI_Right;
+//            animationBinding[EGameObjectAnimDirection.EGOD_RightTop] = EResDirectionId.ERDI_Top;
+//            animationBinding[EGameObjectAnimDirection.EGOD_Top] = EResDirectionId.ERDI_Top;
+//            animationBinding[EGameObjectAnimDirection.EGOD_LeftTop] = EResDirectionId.ERDI_Top;
+//            animationBinding[EGameObjectAnimDirection.EGOD_Left] = EResDirectionId.ERDI_Right;
+//            animationBinding[EGameObjectAnimDirection.EGOD_LeftDown] = EResDirectionId.ERDI_Down;
 //        }
 //        var animatesCache = [];
 //
@@ -176,14 +176,14 @@ var CameCharacterBase = GameObjectBase.extend({
 
     _createCharFrameAnimSeq: function(AnimType, FrameCount, FrameInterval, WithDir, DefDirIdx, bRestoreOriginalFrame){
         var animationBinding = [];
-        animationBinding[EGameObjectDirection.EGOD_Down] = (WithDir ? EResDirectionId.ERDI_Down : DefDirIdx);
-        animationBinding[EGameObjectDirection.EGOD_RightDown] = (WithDir ? EResDirectionId.ERDI_Down : DefDirIdx);
-        animationBinding[EGameObjectDirection.EGOD_Right] = (WithDir ? EResDirectionId.ERDI_Right : DefDirIdx);
-        animationBinding[EGameObjectDirection.EGOD_RightTop] = (WithDir ? EResDirectionId.ERDI_Top : DefDirIdx);
-        animationBinding[EGameObjectDirection.EGOD_Top] = (WithDir ? EResDirectionId.ERDI_Top : DefDirIdx);
-        animationBinding[EGameObjectDirection.EGOD_LeftTop] = (WithDir ? EResDirectionId.ERDI_Top : DefDirIdx);
-        animationBinding[EGameObjectDirection.EGOD_Left] = (WithDir ? EResDirectionId.ERDI_Right : DefDirIdx);
-        animationBinding[EGameObjectDirection.EGOD_LeftDown] = (WithDir ? EResDirectionId.ERDI_Down : DefDirIdx);
+        animationBinding[EGameObjectAnimDirection.EGOD_Down] = (WithDir ? EResDirectionId.ERDI_Down : DefDirIdx);
+        animationBinding[EGameObjectAnimDirection.EGOD_RightDown] = (WithDir ? EResDirectionId.ERDI_Down : DefDirIdx);
+        animationBinding[EGameObjectAnimDirection.EGOD_Right] = (WithDir ? EResDirectionId.ERDI_Right : DefDirIdx);
+        animationBinding[EGameObjectAnimDirection.EGOD_RightTop] = (WithDir ? EResDirectionId.ERDI_Top : DefDirIdx);
+        animationBinding[EGameObjectAnimDirection.EGOD_Top] = (WithDir ? EResDirectionId.ERDI_Top : DefDirIdx);
+        animationBinding[EGameObjectAnimDirection.EGOD_LeftTop] = (WithDir ? EResDirectionId.ERDI_Top : DefDirIdx);
+        animationBinding[EGameObjectAnimDirection.EGOD_Left] = (WithDir ? EResDirectionId.ERDI_Right : DefDirIdx);
+        animationBinding[EGameObjectAnimDirection.EGOD_LeftDown] = (WithDir ? EResDirectionId.ERDI_Down : DefDirIdx);
 
         var animatesCache = [];
 
@@ -249,24 +249,52 @@ var CameCharacterBase = GameObjectBase.extend({
 //    _createFrameAnimSeqVictory: function()
 //    {
 //        //var animationBinding = [];
-//        //animationBinding[EGameObjectDirection.EGOD_Down] = EResDirectionId.ERDI_Down;
-//        //animationBinding[EGameObjectDirection.EGOD_RightDown] = EResDirectionId.ERDI_Down;
-//        //animationBinding[EGameObjectDirection.EGOD_Right] = EResDirectionId.ERDI_Down;
-//        //animationBinding[EGameObjectDirection.EGOD_RightTop] = EResDirectionId.ERDI_Down;
-//        //animationBinding[EGameObjectDirection.EGOD_Top] = EResDirectionId.ERDI_Down;
-//        //animationBinding[EGameObjectDirection.EGOD_LeftTop] = EResDirectionId.ERDI_Down;
-//        //animationBinding[EGameObjectDirection.EGOD_Left] = EResDirectionId.ERDI_Down;
-//        //animationBinding[EGameObjectDirection.EGOD_LeftDown] = EResDirectionId.ERDI_Down;
+//        //animationBinding[EGameObjectAnimDirection.EGOD_Down] = EResDirectionId.ERDI_Down;
+//        //animationBinding[EGameObjectAnimDirection.EGOD_RightDown] = EResDirectionId.ERDI_Down;
+//        //animationBinding[EGameObjectAnimDirection.EGOD_Right] = EResDirectionId.ERDI_Down;
+//        //animationBinding[EGameObjectAnimDirection.EGOD_RightTop] = EResDirectionId.ERDI_Down;
+//        //animationBinding[EGameObjectAnimDirection.EGOD_Top] = EResDirectionId.ERDI_Down;
+//        //animationBinding[EGameObjectAnimDirection.EGOD_LeftTop] = EResDirectionId.ERDI_Down;
+//        //animationBinding[EGameObjectAnimDirection.EGOD_Left] = EResDirectionId.ERDI_Down;
+//        //animationBinding[EGameObjectAnimDirection.EGOD_LeftDown] = EResDirectionId.ERDI_Down;
 //
 //        //this._AnimationsInfo[EGameObjectActionType.EGOAT_Victory] = this._createCharFrameAnimSeq(EGameObjectActionType.EGOAT_Victory,  this._frameCountVictory, this._animationIntervalVictory, animationBinding);
 //    },
+    goToIdleState: function(AnimDir){
+        if(AnimDir === undefined)
+            AnimDir = EGameObjectAnimDirection.EGOD_Down;
 
+        this._super(AnimDir);
+
+        this._MyRootSprite.stopAllActions();
+        this._CurrentAction = this._AnimationsInfo[EGameObjectActionType.idle].animateInstances[AnimDir];
+        this._MyRootSprite.runAction(cc.repeatForever(this._CurrentAction));
+    },
+
+    goToMoveState: function(AnimDir){
+        if(AnimDir === undefined)
+            return;
+
+        this._super(AnimDir);
+
+        this._MyRootSprite.stopAllActions();
+        this._CurrentAction = this._AnimationsInfo[EGameObjectActionType.walk].animateInstances[AnimDir];
+        this._MyRootSprite.runAction(cc.repeatForever(this._CurrentAction));
+    },
+
+    moveTo: function(moveToPt){
+        this._super(moveToPt);
+
+        var action = new cc.MoveTo(cc.pDistance(this.getPosition(), moveToPt)/this._fDefaultGroundSpeed, this._MoveToPt);
+        this.runAction(cc.sequence(action, cc.callFunc(this.moveFinishCallBack, this)));
+    },
+
+    moveFinishCallBack: function(){
+        this.goToIdleState();
+    },
     /**
      * Action
      */
-    moverTo: function(TargetLoc){
-
-    },
 
     ctor:function(defLvl) {
         this._super(defLvl);
@@ -294,9 +322,12 @@ var CameCharacterBase = GameObjectBase.extend({
 
                     self._GameObjectLvlMax = keys.length;
 
-                    if(self._iDefaultLvl > 0){
+                    if(self._iDefaultLvl !== undefined){
                         if(self._iDefaultLvl > self._GameObjectLvlMax){
                             self._iDefaultLvl = self._GameObjectLvlMax;
+                        }
+                        else if(self._iDefaultLvl < keys[0]){
+                            self._iDefaultLvl = keys[0];
                         }
                         self._GameObjectLvl = self._iDefaultLvl;
                     }
