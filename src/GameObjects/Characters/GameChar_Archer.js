@@ -12,11 +12,11 @@ var GameChar_Archer = CameCharacterBase.extend({
     _initShadow: function(){
         this._super();
 
-        if(this._SelectShadow)
+        if(this._SelectedShadow)
         {
-            this._SelectShadow.initWithFile(res.SelectShadow06);
-            this._SelectShadow.setPosition(this._fSpriteOffsetX, 25);
-            this._SelectShadow.setScale(0.5);
+            this._SelectedShadow.initWithFile(res.SelectShadow06);
+            this._SelectedShadow.setPosition(this._fSpriteOffsetX, 25);
+            this._SelectedShadow.setScale(0.5);
         }
     }
 })

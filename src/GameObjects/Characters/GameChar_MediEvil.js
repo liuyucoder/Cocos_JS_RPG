@@ -1,9 +1,9 @@
 /**
- * Created by yu.liu on 2015/10/28.
+ * Created by yu.liu on 2015/12/2.
  */
 
-var GameChar_InfantryMan = CameCharacterBase.extend({
-    _className: "GameChar_InfantryMan",
+var GameChar_MediEvil = CameCharacterBase.extend({
+    _className: "GameChar_MediEvil",
 
     ctor:function(defLvl){
         this._super(defLvl);
@@ -14,7 +14,7 @@ var GameChar_InfantryMan = CameCharacterBase.extend({
 
         if(this._SelectedShadow)
         {
-            this._SelectedShadow.initWithFile(res.SelectShadow00);
+            this._SelectedShadow.initWithFile(res.SelectShadow02);
             this._SelectedShadow.setPosition(this._fSpriteOffsetX, 25);
             this._SelectedShadow.setScale(0.5);
         }

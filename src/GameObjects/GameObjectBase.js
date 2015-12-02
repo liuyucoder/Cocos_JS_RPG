@@ -2,7 +2,7 @@
  * Created by yu.liu on 2015/10/28.
  */
 
-var bDrawObjRect = true;
+var bDrawObjRect = false;
 
 var EGameObjectType = {
     EGOT_Building: 0,
@@ -133,7 +133,8 @@ var GameObjectBase = cc.Node.extend({
     _HPBg: null,
     _HPBarHeight: 20,
     _ObjShadow: null,
-    _SelectShadow: null,
+    _SelectedShadow: null,
+    _MoveOnShadow: null,
     //
     _Vehicle: null,
 
@@ -203,22 +204,38 @@ var GameObjectBase = cc.Node.extend({
     },
 
     _initShadow: function(){
-        if(this._SelectShadow === null)
+        if(this._SelectedShadow === null)
         {
-            this._SelectShadow = new cc.Sprite();
-            this.addChild(this._SelectShadow);
-            this._SelectShadow.setVisible(false);
+            this._SelectedShadow = new cc.Sprite();
+            this.addChild(this._SelectedShadow);
+            this._SelectedShadow.setVisible(false);
+        }
+        if(this._MoveOnShadow === null)
+        {
+            this._MoveOnShadow = new cc.Sprite();
+            this.addChild(this._MoveOnShadow);
+            this._MoveOnShadow.setVisible(false);
         }
     },
 
     showShadow: function(bShow){
-        if(this._SelectShadow){
-            this._SelectShadow.setVisible(bShow);
+        if(this._SelectedShadow){
+            this._SelectedShadow.setVisible(bShow);
+        }
+    },
+
+    showMoveOnShadow: function(bShow){
+        if(this._MoveOnShadow){
+            this._MoveOnShadow.setVisible(bShow);
         }
     },
 
     onSelected: function(bSelected){
         this.showShadow(bSelected);
+    },
+
+    onMoveOn: function(bMoveOn){
+        this.showMoveOnShadow(bMoveOn);
     },
     /**
      * ====================================================================End
@@ -268,10 +285,8 @@ var GameObjectBase = cc.Node.extend({
     moveTo: function(moveToPt){
         this._MoveToPt = moveToPt;
 
-        var faceDir = this.getFaceDir(this._MoveToPt);
-        if(faceDir >= EGameObjectAnimDirection.EGOD_Down){
-            this.goToMoveState(faceDir);
-        }
+        this._eGameObjectDirection = this.getFaceDir(this._MoveToPt);
+        this.goToMoveState(this._eGameObjectDirection);
     },
 
     moveFinishCallBack: function(){
@@ -288,7 +303,7 @@ var GameObjectBase = cc.Node.extend({
 
         var subX = pt.x - this.getPosition().x;
         var subY = pt.y - this.getPosition().y;
-        var DirType = -1;
+        var DirType = EGameObjectAnimDirection.EGOD_Down;
         //! move to right
         if(subX > 0){
             this.flippedRootSpriteX(false);

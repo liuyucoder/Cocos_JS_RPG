@@ -23,6 +23,8 @@
         "src/GameObjects/Characters/GameCharacterBase.js",
         "src/GameObjects/Characters/GameChar_InfantryMan.js",
         "src/GameObjects/Characters/GameChar_Archer.js",
+        "src/GameObjects/Characters/GameChar_Sorcerer.js",
+        "src/GameObjects/Characters/GameChar_MediEvil.js",
 
         "src/GameScenes/GameSceneBase.js",
 

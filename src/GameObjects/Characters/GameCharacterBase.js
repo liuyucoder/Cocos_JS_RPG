@@ -9,7 +9,16 @@ var CameCharacterBase = GameObjectBase.extend({
     //
     _AnimationsInfo: [],
 
+    _initShadow: function(){
+        this._super();
 
+        if(this._MoveOnShadow)
+        {
+            this._MoveOnShadow.initWithFile(res.SelectShadow03);
+            this._MoveOnShadow.setPosition(this._fSpriteOffsetX, 25);
+            this._MoveOnShadow.setScale(0.5);
+        }
+    },
     /**
      * Animations
      */
@@ -262,7 +271,7 @@ var CameCharacterBase = GameObjectBase.extend({
 //    },
     goToIdleState: function(AnimDir){
         if(AnimDir === undefined)
-            AnimDir = EGameObjectAnimDirection.EGOD_Down;
+            AnimDir = this._eGameObjectDirection;
 
         this._super(AnimDir);
 
@@ -307,6 +316,10 @@ var CameCharacterBase = GameObjectBase.extend({
 
     update:function(){
         //GameLog.c("CameCharacterBase::update().");
+        if(this._eGameObjState == EGameObjectState.EGOS_Walk){
+            var y = this.getPositionY();
+            this.setLocalZOrder(-y);
+        }
     },
 
     _initDefaultData: function(){

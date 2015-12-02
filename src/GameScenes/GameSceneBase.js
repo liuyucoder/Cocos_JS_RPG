@@ -61,23 +61,51 @@ var GameSceneBase = cc.Scene.extend({
     },
 
     _SelectedGameObj: null,
+    _MoveOnGameObj: null,
     onSelectedObj: function(obj, loc){
-        loc = this.convertToNodeSpace(loc);
-        if(obj){
-            if(obj instanceof GameObjectBase){
-                this._SelectedGameObj = obj;
-                this._SelectedGameObj.onSelected(true);
-            }
-        }
-        else{
-            if(this._SelectedGameObj){
-                this._SelectedGameObj.onSelected(false);
-                if(this.canReachThePt(loc)){
-                    this._SelectedGameObj.moveTo(loc);
+        if(this._layerGamePlay){
+            loc = this._layerGamePlay.convertToNodeSpace(loc);
+            if(obj){
+                if(obj instanceof GameObjectBase){
+                    this._SelectedGameObj = obj;
+                    this._SelectedGameObj.onSelected(true);
                 }
-                this._SelectedGameObj = null;
+            }
+            else{
+                if(this._SelectedGameObj){
+                    this._SelectedGameObj.onSelected(false);
+                    if(this.canReachThePt(this.clipTouchLoc(loc))){
+                        this._SelectedGameObj.moveTo(loc);
+                    }
+                    this._SelectedGameObj = null;
+                }
             }
         }
+    },
+    onMoveOnObj: function(obj){
+        if(this._MoveOnGameObj !== null && this._MoveOnGameObj !== obj){
+            this._MoveOnGameObj.onMoveOn(false);
+        }
+        this._MoveOnGameObj = obj;
+        if(this._MoveOnGameObj !== null){
+            this._MoveOnGameObj.onMoveOn(true);
+        }
+    },
+    clipTouchLoc: function(loc){
+        var size = cc.director.getWinSize();
+        if(loc.x < 0){
+            loc.x = 0;
+        }
+        else if(loc.x > size.width){
+            loc.x = size.width;
+        }
+        if(loc.y < 0){
+            loc.y = 0;
+        }
+        else if(loc.y > (size.height - 100)){
+            loc.y = size.height - 100;
+        }
+        return loc;
     },
     canReachThePt: function(pt){
         return true;
@@ -182,7 +210,44 @@ var GameSceneBase = cc.Scene.extend({
         this._createRoles();
     },
 
-    gameSceneBaseTestFun: function(){
-        GameLog.c("***********");
+    inputNotify_onTouchBegan: function(touchLoc){
+        this.onSelectedObj(this.getHeroByTouch(touchLoc), touchLoc);
+    },
+
+    inputNotify_onTouchMoved: function(touchLoc){
+        if(this._SelectedGameObj)
+            this.onMoveOnObj(this.getHeroByTouch(touchLoc));
+    },
+
+    inputNotify_onTouchEnded: function(touchLoc){
+        this.onMoveOnObj(null);
+        this.onSelectedObj(null, touchLoc);
+    },
+
+    getHeroByTouch: function(loc, bGetFirst){
+        var firstObj = null;
+        if(bGetFirst === undefined){
+            bGetFirst = true;
+        }
+        if((this._Heroes instanceof Array) && this._Heroes.length > 0){
+            for(var i in this._Heroes){
+                var locationInNode = this._Heroes[i].convertToNodeSpace(loc);
+                if (cc.rectContainsPoint(this._Heroes[i].getObjValidRect(), locationInNode)) {
+                    if(bGetFirst){
+                        if(firstObj === null)
+                        {
+                            firstObj = this._Heroes[i];
+                        }
+                        else if(firstObj.getLocalZOrder() < this._Heroes[i].getLocalZOrder()){
+                            firstObj = this._Heroes[i];
+                        }
+                    }
+                    else{
+                        return this._Heroes[i];
+                    }
+                }
+            }
+        }
+        return firstObj;
     }
 })
