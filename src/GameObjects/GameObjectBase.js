@@ -111,12 +111,37 @@ var GameObjectBase = cc.Node.extend({
     //_iDefaultLvl: -1,
     _eGameObjectDirection: EGameObjectAnimDirection.EGOD_Down,
     _eTeamNum: ETeamNum.ETT_Unknown,
+    getTeamNum: function(){
+        return this._eTeamNum;
+    },
+    setTeamNum: function(teamType){
+        this._eTeamNum = teamType;
+    },
+    isInTheSameTeam: function(obj){
+        return (obj.getTeamNum() === this.getTeamNum())
+    },
+    isValidEnemy: function(obj){
+        return (obj !== this && obj.getTeamNum() !== this.getTeamNum());
+    },
+
     _bPlayer: false,
     _bNPC: false,
 
     //AI
     _enemy: null,
+    setEnemy: function(newEnemy){
+        this._enemy = newEnemy;
+    },
+    getEnemy: function(){
+        return this._enemy;
+    },
     _fireTarget:null,
+    setFireTarget: function(newFireTarget){
+        this._fireTarget = newFireTarget;
+    },
+    getFireTarget: function(){
+        return this._fireTarget;
+    },
     _followTarget: null,
 
     //
@@ -296,10 +321,17 @@ var GameObjectBase = cc.Node.extend({
 
 
     _MoveToPt: null,
+    _MoveToAction: null,
+
+    _getMoveToAction: function(){
+        if(this._MoveToAction === null){
+            this._MoveToAction = new cc.MoveTo();
+        }
+        return this._MoveToAction;
+    },
 
     moveTo: function(moveToPt){
         this._MoveToPt = moveToPt;
-
         this._eGameObjectDirection = this.getFaceDir(this._MoveToPt);
         this.goToMoveState(this._eGameObjectDirection);
     },

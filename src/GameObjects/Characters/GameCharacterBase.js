@@ -294,8 +294,9 @@ var CameCharacterBase = GameObjectBase.extend({
     moveTo: function(moveToPt){
         this._super(moveToPt);
 
-        var action = new cc.MoveTo(cc.pDistance(this.getPosition(), moveToPt)/this._fDefaultGroundSpeed, this._MoveToPt);
-        this.runAction(cc.sequence(action, cc.callFunc(this.moveFinishCallBack, this)));
+        var moveAction = this._getMoveToAction();
+        moveAction.initWithDuration(cc.pDistance(this.getPosition(), moveToPt)/this._fDefaultGroundSpeed, this._MoveToPt);
+        this.runAction(cc.sequence(moveAction, cc.callFunc(this.moveFinishCallBack, this)));
     },
 
     moveFinishCallBack: function(){
