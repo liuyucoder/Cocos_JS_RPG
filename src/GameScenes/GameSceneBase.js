@@ -62,7 +62,9 @@ var GameSceneBase = cc.Scene.extend({
 
     _SelectedGameObj: null,
     _MoveOnGameObj: null,
-    onSelectedObj: function(obj, loc){
+    onSelectedObj: function(obj, loc, bMove){
+        if(bMove === undefined)
+            bMove = false;
         if(this._layerGamePlay){
             loc = this._layerGamePlay.convertToNodeSpace(loc);
             if(obj){
@@ -74,7 +76,7 @@ var GameSceneBase = cc.Scene.extend({
             else{
                 if(this._SelectedGameObj){
                     this._SelectedGameObj.onSelected(false);
-                    if(this.canReachThePt(this.clipTouchLoc(loc))){
+                    if(bMove && this.canReachThePt(this.clipTouchLoc(loc))){
                         this._SelectedGameObj.moveTo(loc);
                     }
                     this._SelectedGameObj = null;
@@ -220,15 +222,19 @@ var GameSceneBase = cc.Scene.extend({
     },
 
     inputNotify_onTouchEnded: function(touchLoc){
+        var bShouldMove = true;
         if(this._SelectedGameObj && this._MoveOnGameObj){
             if(this._MoveOnGameObj.isValidEnemy(this._SelectedGameObj)){
                 this._SelectedGameObj.setEnemy(this._MoveOnGameObj);
-                return;
+                bShouldMove = false;
+            }
+            else{
+
             }
         }
 
         this.onMoveOnObj(null);
-        this.onSelectedObj(null, touchLoc);
+        this.onSelectedObj(null, touchLoc, bShouldMove);
     },
 
     getHeroByTouch: function(loc, bGetFirst){
