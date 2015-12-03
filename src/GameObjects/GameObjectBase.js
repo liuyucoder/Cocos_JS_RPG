@@ -189,15 +189,19 @@ var GameObjectBase = cc.Node.extend({
     _initHPBar: function(){
         if(this._HPBg === null)
         {
-            this._HPBg = new cc.Sprite(res.HPProgressBar);
+            this._HPBg = new cc.Sprite(res.HPProgressBarBg);
             this._HPBg.setScale(0.15);
             this._HPBg.setAnchorPoint(cc.p(0.5, 0));
             this._HPBg.setPosition(this._fSpriteOffsetX, this.getContentSize().height + this._HPBarHeight);
             this.addChild(this._HPBg);
 
-//            var hp = new cc.Sprite(res.HPProgressBar);
-//            hp.setAnchorPoint(cc.p(0, 0));
-//            this._HPBg.addChild(hp);
+            if(this._HPBar === null)
+            {
+                this._HPBar = new cc.Sprite(res.HPProgressBar);
+                this._HPBar.setAnchorPoint(cc.p(0, 0));
+                this._HPBar.setPosition(2, 0);
+                this._HPBg.addChild(this._HPBar);
+            }
         }
     },
 
