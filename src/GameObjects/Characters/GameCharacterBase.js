@@ -15,7 +15,7 @@ var CameCharacterBase = GameObjectBase.extend({
         if(this._MoveOnShadow)
         {
             this._MoveOnShadow.initWithFile(res.SelectShadow03);
-            this._MoveOnShadow.setPosition(this._fSpriteOffsetX, 25);
+            //this._MoveOnShadow.setPosition(this._fSpriteOffsetX, 25);
             this._MoveOnShadow.setScale(0.5);
         }
     },
@@ -72,7 +72,7 @@ var CameCharacterBase = GameObjectBase.extend({
 
             if(bDrawObjRect){
                 var markBg = new cc.Sprite(res.MarkBg);
-                markBg.setScale(0.25);
+                markBg.setScale(0.1);
                 this.addChild(markBg);
             }
 
@@ -91,7 +91,7 @@ var CameCharacterBase = GameObjectBase.extend({
                 //var lb = cc.p(this._MyRootSprite.getPosition().x - this.getContentSize().width/2, this._MyRootSprite.getPosition().y - this.getContentSize().height/2);
                 //var rt = cc.p(this._MyRootSprite.getPosition().x + this.getContentSize().width/2, this._MyRootSprite.getPosition().y + this.getContentSize().height/2);
                 //GameLog.c("####  (%s, %s)   (%s, %s)", lb.x, lb.y, rt.x, rt.y);
-                drawNode.drawRect(this.getRectPtLB(), this.getRectPtRT(), cc.color(0, 255, 0, 0), 5, cc.color(0, 255, 0, 255));
+                drawNode.drawRect(this.getRectPtLB(), this.getRectPtRT(), cc.color(0, 255, 0, 0), 2, cc.color(0, 255, 0, 255));
                 this.addChild(drawNode);
             }
         }

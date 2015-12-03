@@ -2,7 +2,7 @@
  * Created by yu.liu on 2015/10/28.
  */
 
-var bDrawObjRect = false;
+var bDrawObjRect = true;
 
 var EGameObjectType = {
     EGOT_Building: 0,
@@ -107,12 +107,17 @@ var GameObjectBase = cc.Node.extend({
         //return cc.rect(-s.width/2 + this._fSpriteOffsetX, -s.height/2 + this._fSpriteOffsetY, s.width, s.height);
         return cc.rect(-s.width/2, 0, s.width, s.height);
     },
-    //
+
     //_iDefaultLvl: -1,
     _eGameObjectDirection: EGameObjectAnimDirection.EGOD_Down,
     _eTeamNum: ETeamNum.ETT_Unknown,
     _bPlayer: false,
     _bNPC: false,
+
+    //AI
+    _enemy: null,
+    _fireTarget:null,
+    _followTarget: null,
 
     //
     _eGameObjState: EGameObjectState.EGOS_Idle,
@@ -186,8 +191,8 @@ var GameObjectBase = cc.Node.extend({
         {
             this._HPBg = new cc.Sprite(res.HPProgressBar);
             this._HPBg.setScale(0.15);
-            this._HPBg.setAnchorPoint(cc.p(0, 0));
-            this._HPBg.setPosition(-this.getContentSize().width/2 + this._fSpriteOffsetX - 5, this.getContentSize().height + 20);
+            this._HPBg.setAnchorPoint(cc.p(0.5, 0));
+            this._HPBg.setPosition(this._fSpriteOffsetX, this.getContentSize().height + this._HPBarHeight);
             this.addChild(this._HPBg);
 
 //            var hp = new cc.Sprite(res.HPProgressBar);
@@ -218,7 +223,13 @@ var GameObjectBase = cc.Node.extend({
         }
     },
 
-    showShadow: function(bShow){
+    showObjShadow: function(bShow){
+        if(this._ObjShadow){
+            this._ObjShadow.setVisible(bShow);
+        }
+    },
+
+    showSelectedShadow: function(bShow){
         if(this._SelectedShadow){
             this._SelectedShadow.setVisible(bShow);
         }
@@ -231,7 +242,7 @@ var GameObjectBase = cc.Node.extend({
     },
 
     onSelected: function(bSelected){
-        this.showShadow(bSelected);
+        this.showSelectedShadow(bSelected);
     },
 
     onMoveOn: function(bMoveOn){
@@ -412,7 +423,7 @@ var GameObjectBase = cc.Node.extend({
 
         //! 1: Load data from csv
         if(this._initDefaultData()){
-            this.setContentSize(cc.size(70, 100));
+            this._setObjContentSize();
             //! 2: Init Render Info
             this._initRenderObjInfo();
         }
@@ -424,6 +435,10 @@ var GameObjectBase = cc.Node.extend({
     _initDefaultData: function(){
         GameLog.c("GameObjectBase::_initDefaultData()");
         return false;
+    },
+
+    _setObjContentSize: function(newSize){
+
     },
 
     _refreshDefaultData: function(){
