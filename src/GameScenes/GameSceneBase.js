@@ -220,12 +220,10 @@ var GameSceneBase = cc.Scene.extend({
     },
 
     inputNotify_onTouchEnded: function(touchLoc){
-        GameLog.c("@@@1");
         if(this._SelectedGameObj && this._MoveOnGameObj){
-            GameLog.c("@@@2");
             if(this._MoveOnGameObj.isValidEnemy(this._SelectedGameObj)){
-                GameLog.c("@@@3");
                 this._SelectedGameObj.setEnemy(this._MoveOnGameObj);
+                return;
             }
         }
 
