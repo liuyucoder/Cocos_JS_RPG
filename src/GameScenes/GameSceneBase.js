@@ -60,39 +60,39 @@ var GameSceneBase = cc.Scene.extend({
         }
     },
 
-    _SelectedGameObj: null,
-    _MoveOnGameObj: null,
-    onSelectedObj: function(obj, loc, bMove){
-        if(bMove === undefined)
-            bMove = false;
-        if(this._layerGamePlay){
-            loc = this._layerGamePlay.convertToNodeSpace(loc);
-            if(obj){
-                if(obj instanceof GameObjectBase){
-                    this._SelectedGameObj = obj;
-                    this._SelectedGameObj.onSelected(true);
-                }
-            }
-            else{
-                if(this._SelectedGameObj){
-                    this._SelectedGameObj.onSelected(false);
-                    if(bMove && this.canReachThePt(this.clipTouchLoc(loc))){
-                        this._SelectedGameObj.moveTo(loc);
-                    }
-                    this._SelectedGameObj = null;
-                }
-            }
-        }
-    },
-    onMoveOnObj: function(obj){
-        if(this._MoveOnGameObj !== null && this._MoveOnGameObj !== obj){
-            this._MoveOnGameObj.onMoveOn(false);
-        }
-        this._MoveOnGameObj = obj;
-        if(this._MoveOnGameObj !== null){
-            this._MoveOnGameObj.onMoveOn(true);
-        }
-    },
+//    _SelectedGameObj: null,
+//    _MoveOnGameObj: null,
+//    onSelectedObj: function(obj, loc, bMove){
+//        if(bMove === undefined)
+//            bMove = false;
+//        if(this._layerGamePlay){
+//            loc = this._layerGamePlay.convertToNodeSpace(loc);
+//            if(obj){
+//                if(obj instanceof GameObjectBase){
+//                    this._SelectedGameObj = obj;
+//                    this._SelectedGameObj.onSelected(true);
+//                }
+//            }
+//            else{
+//                if(this._SelectedGameObj){
+//                    this._SelectedGameObj.onSelected(false);
+//                    if(bMove && this.canReachThePt(this.clipTouchLoc(loc))){
+//                        this._SelectedGameObj.moveTo(loc);
+//                    }
+//                    this._SelectedGameObj = null;
+//                }
+//            }
+//        }
+//    },
+//    onMoveOnObj: function(obj){
+//        if(this._MoveOnGameObj !== null && this._MoveOnGameObj !== obj){
+//            this._MoveOnGameObj.onMoveOn(false);
+//        }
+//        this._MoveOnGameObj = obj;
+//        if(this._MoveOnGameObj !== null){
+//            this._MoveOnGameObj.onMoveOn(true);
+//        }
+//    },
     clipTouchLoc: function(loc){
         var size = cc.director.getWinSize();
         if(loc.x < 0){
@@ -119,7 +119,13 @@ var GameSceneBase = cc.Scene.extend({
 
     _layerBg: null,
     _layerGamePlay: null,
+    getGamePlayLayer: function(){
+        return this._layerGamePlay;
+    },
     _layerInput: null,
+    getInputLayer: function(){
+        return this._layerInput;
+    },
     _layerUI: null,
     _layerMask: null,
 
@@ -212,30 +218,30 @@ var GameSceneBase = cc.Scene.extend({
         this._createRoles();
     },
 
-    inputNotify_onTouchBegan: function(touchLoc){
-        this.onSelectedObj(this.getHeroByTouch(touchLoc), touchLoc);
-    },
-
-    inputNotify_onTouchMoved: function(touchLoc){
-        if(this._SelectedGameObj)
-            this.onMoveOnObj(this.getHeroByTouch(touchLoc));
-    },
-
-    inputNotify_onTouchEnded: function(touchLoc){
-        var bShouldMove = true;
-        if(this._SelectedGameObj && this._MoveOnGameObj){
-            if(this._MoveOnGameObj.isValidEnemy(this._SelectedGameObj)){
-                this._SelectedGameObj.setEnemy(this._MoveOnGameObj);
-                bShouldMove = false;
-            }
-            else{
-
-            }
-        }
-
-        this.onMoveOnObj(null);
-        this.onSelectedObj(null, touchLoc, bShouldMove);
-    },
+//    inputNotify_onTouchBegan: function(touchLoc){
+//        this.onSelectedObj(this.getHeroByTouch(touchLoc), touchLoc);
+//    },
+//
+//    inputNotify_onTouchMoved: function(touchLoc){
+//        if(this._SelectedGameObj)
+//            this.onMoveOnObj(this.getHeroByTouch(touchLoc));
+//    },
+//
+//    inputNotify_onTouchEnded: function(touchLoc){
+//        var bShouldMove = true;
+//        if(this._SelectedGameObj && this._MoveOnGameObj){
+//            if(this._MoveOnGameObj.isValidEnemy(this._SelectedGameObj)){
+//                this._SelectedGameObj.setEnemy(this._MoveOnGameObj);
+//                bShouldMove = false;
+//            }
+//            else{
+//
+//            }
+//        }
+//
+//        this.onMoveOnObj(null);
+//        this.onSelectedObj(null, touchLoc, bShouldMove);
+//    },
 
     getHeroByTouch: function(loc, bGetFirst){
         var firstObj = null;
