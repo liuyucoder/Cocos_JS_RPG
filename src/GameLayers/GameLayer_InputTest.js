@@ -59,7 +59,7 @@ var GameLayer_InputTest = GameLayerInputBase.extend({
 
         var bShouldMove = true;
         if(this._selectedGameObj && this._moveOnGameObj){
-            if(this._moveOnGameObj.isValidEnemy(this._selectedGameObj)){
+            if(this._moveOnGameObj.isValidEnemyFor(this._selectedGameObj)){
                 this._selectedGameObj.setEnemy(this._moveOnGameObj);
                 bShouldMove = false;
             }
@@ -91,7 +91,7 @@ var GameLayer_InputTest = GameLayerInputBase.extend({
 
                     var gameScene = this.getGameScene();
                     if(bMove && gameScene && gameScene.canReachThePt(gameScene.clipTouchLoc(loc))){
-                        this._selectedGameObj.moveTo(loc);
+                        this._selectedGameObj.forceMoveToPt(loc);
                     }
                     this._selectedGameObj = null;
                 }

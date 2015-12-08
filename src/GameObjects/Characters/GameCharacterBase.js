@@ -75,8 +75,6 @@ var CameCharacterBase = GameObjectBase.extend({
                 markBg.setScale(0.1);
                 this.addChild(markBg);
             }
-
-            this.scheduleUpdate();
         }
 
         if(this._MyRootSprite != null){
@@ -222,7 +220,8 @@ var CameCharacterBase = GameObjectBase.extend({
                     animation.addSpriteFrame(spriteFrame);
                 }
                 animation.setDelayPerUnit(FrameInterval);
-                animation.setRestoreOriginalFrame(bRestoreOriginalFrame == null ? true : bRestoreOriginalFrame);
+                //animation.setRestoreOriginalFrame(bRestoreOriginalFrame == null ? true : bRestoreOriginalFrame);
+                animation.setRestoreOriginalFrame(false);
 
                 animate = cc.animate(animation);
             }
@@ -291,15 +290,44 @@ var CameCharacterBase = GameObjectBase.extend({
         this._MyRootSprite.runAction(cc.repeatForever(this._CurrentAction));
     },
 
-    moveTo: function(moveToPt){
+    goToAttackState: function(AnimDir){
+        if(AnimDir === undefined)
+            AnimDir = this._eGameObjectDirection;
+
+        this._super(AnimDir);
+
+        this._MyRootSprite.stopAllActions();
+        this._CurrentAction = this._AnimationsInfo[EGameObjectActionType.attack].animateInstances[AnimDir];
+        this._MyRootSprite.runAction(cc.sequence(this._CurrentAction, cc.callFunc(this.attackFinishCallBack, this)));
+    },
+
+    attackFinishCallBack: function(){
+        this.setLastMeleeTime();
+        this.goToIdleState();
+    },
+
+    moveToPt: function(moveToPt){
         this._super(moveToPt);
 
-        var moveAction = this._getMoveToAction();
-        moveAction.initWithDuration(cc.pDistance(this.getPosition(), moveToPt)/this._fDefaultGroundSpeed, this._MoveToPt);
-        this.runAction(cc.sequence(moveAction, cc.callFunc(this.moveFinishCallBack, this)));
+        if(this._MoveToPt){
+            var moveAction = this._getMoveToAction();
+            moveAction.initWithDuration(cc.pDistance(this.getPosition(), moveToPt)/this._fDefaultGroundSpeed, this._MoveToPt);
+            this.runAction(cc.sequence(moveAction, cc.callFunc(this.moveFinishCallBack, this)));
+        }
+    },
+
+    moveToTarget: function(){
+        if(!this._bForceMoveToPt && this._enemy != null && ((this._gameTimeDelta - this._lastMoveTickTime) > 1) ){
+            this._lastMoveTickTime = this._gameTimeDelta;
+
+            var dir = cc.pSub(this.getPosition() ,this._enemy.getPosition());
+            dir = cc.pNormalize(dir);
+            this.moveToPt(cc.pAdd(cc.pMult(dir, this._enemyMeleeDis_Melee * 0.8), this._enemy.getPosition()));
+        }
     },
 
     moveFinishCallBack: function(){
+        this._super();
         this.goToIdleState();
     },
     /**
@@ -315,11 +343,22 @@ var CameCharacterBase = GameObjectBase.extend({
         //GameLog.c("CameCharacterBase onEnter()");
     },
 
-    update:function(){
-        //GameLog.c("CameCharacterBase::update().");
+    update:function(dt){
+        this._super(dt);
+
         if(this._eGameObjState == EGameObjectState.EGOS_Walk){
             var y = this.getPositionY();
             this.setLocalZOrder(-y);
+        }
+        if(this.hasValidEnemy()){
+            if(this.isMeleeRange(this.getEnemy().getPosition())){
+                if(this.canEngageMelee()){
+                    this.doMeleeAttack();
+                }
+            }
+            else{
+                this.moveToTarget();
+            }
         }
     },
 

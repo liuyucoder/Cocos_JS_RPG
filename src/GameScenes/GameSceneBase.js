@@ -230,7 +230,7 @@ var GameSceneBase = cc.Scene.extend({
 //    inputNotify_onTouchEnded: function(touchLoc){
 //        var bShouldMove = true;
 //        if(this._SelectedGameObj && this._MoveOnGameObj){
-//            if(this._MoveOnGameObj.isValidEnemy(this._SelectedGameObj)){
+//            if(this._MoveOnGameObj.isValidEnemyFor(this._SelectedGameObj)){
 //                this._SelectedGameObj.setEnemy(this._MoveOnGameObj);
 //                bShouldMove = false;
 //            }

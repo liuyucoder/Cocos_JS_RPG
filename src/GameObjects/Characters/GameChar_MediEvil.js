@@ -5,6 +5,9 @@
 var GameChar_MediEvil = CameCharacterBase.extend({
     _className: "GameChar_MediEvil",
 
+    _meleeCD: 3.5,
+    _enemyMeleeDis_Melee: 100,
+
     ctor:function(defLvl){
         this._super(defLvl);
     },

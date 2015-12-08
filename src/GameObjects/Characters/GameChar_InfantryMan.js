@@ -5,6 +5,9 @@
 var GameChar_InfantryMan = CameCharacterBase.extend({
     _className: "GameChar_InfantryMan",
 
+    _meleeCD: 2,
+    _enemyMeleeDis_Melee: 100,
+
     ctor:function(defLvl){
         this._super(defLvl);
     },

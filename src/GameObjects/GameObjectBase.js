@@ -2,7 +2,7 @@
  * Created by yu.liu on 2015/10/28.
  */
 
-var bDrawObjRect = true;
+var bDrawObjRect = false;
 
 var EGameObjectType = {
     EGOT_Building: 0,
@@ -21,7 +21,8 @@ var EGameObjectState = {
     EGOS_Walk: 1,
     EGOS_RoadieRun: 2,
     EGOS_DBNO: 3,
-    EGOS_Dying: 4
+    EGOS_Dying: 4,
+    EGOS_Attack:5
 };
 
 var EGameObjectAnimDirection = {
@@ -120,8 +121,17 @@ var GameObjectBase = cc.Node.extend({
     isInTheSameTeam: function(obj){
         return (obj.getTeamNum() === this.getTeamNum())
     },
-    isValidEnemy: function(obj){
+    isValidEnemyFor: function(obj){
         return (obj !== this && obj.getTeamNum() !== this.getTeamNum());
+    },
+    hasValidEnemy: function(testPbj){
+        if(testPbj === undefined){
+            testPbj = this._enemy;
+        }
+        if(testPbj && testPbj.isValidEnemyFor(this)){
+            return true;
+        }
+        return false;
     },
 
     _bPlayer: false,
@@ -280,6 +290,34 @@ var GameObjectBase = cc.Node.extend({
     /**
      * ====================================================================End
      */
+    _gameTimeDelta: 0,
+
+    _lastMoveTickTime: 0,
+
+    _meleeCD: 2,
+    _enemyMeleeDis_Melee: 100,
+    _lastMeleeTime: 0,
+    isMeleeRange: function(loc){
+        if(cc.pDistance(this.getPosition(), loc) <= this._enemyMeleeDis_Melee){
+            return true;
+        }
+        return false;
+    },
+    canEngageMelee: function(){
+        if(this._eGameObjState === EGameObjectState.EGOS_Attack || (this._gameTimeDelta - this._lastMeleeTime) < this._meleeCD){
+            return false;
+        }
+        return true;
+    },
+    setLastMeleeTime: function(){
+        this._lastMeleeTime = this._gameTimeDelta;
+    },
+    doMeleeAttack: function(){
+        this._eGameObjectDirection = this.getFaceDir(this._enemy.getPosition());
+        this.goToAttackState(this._eGameObjectDirection);
+    },
+
+
 
     /**
      * ==========================  Animation  =============================Begin
@@ -319,8 +357,13 @@ var GameObjectBase = cc.Node.extend({
         this.changeGameObjState(EGameObjectState.EGOS_Walk);
     },
 
+    goToAttackState: function(AnimDir){
+        this.changeGameObjState(EGameObjectState.EGOS_Attack);
+    },
+
 
     _MoveToPt: null,
+    _bForceMoveToPt: false,
     _MoveToAction: null,
 
     _getMoveToAction: function(){
@@ -330,15 +373,24 @@ var GameObjectBase = cc.Node.extend({
         return this._MoveToAction;
     },
 
-    moveTo: function(moveToPt){
+    moveToPt: function(moveToPt){
         this._MoveToPt = moveToPt;
         this._eGameObjectDirection = this.getFaceDir(this._MoveToPt);
         this.goToMoveState(this._eGameObjectDirection);
     },
 
-    moveFinishCallBack: function(){
+    moveToTarget: function(){},
 
+    forceMoveToPt: function(moveToPt){
+        this._bForceMoveToPt = true;
+        this.moveToPt(moveToPt);
     },
+
+    moveFinishCallBack: function(){
+        this._bForceMoveToPt = false;
+    },
+
+    attackFinishCallBack: function(){},
 
     flippedRootSpriteX: function(bFlipped){
         if(this._MyRootSprite){
@@ -347,87 +399,89 @@ var GameObjectBase = cc.Node.extend({
     },
 
     getFaceDir: function(pt){
-
-        var subX = pt.x - this.getPosition().x;
-        var subY = pt.y - this.getPosition().y;
         var DirType = EGameObjectAnimDirection.EGOD_Down;
-        //! move to right
-        if(subX > 0){
-            this.flippedRootSpriteX(false);
-            var angleX = cc.pAngle(cc.p(1, 0), cc.p(subX, subY));
-            if(subY === 0 || angleX < 0.52){
-                //GameLog.c("### Face Right.");
-                DirType = EGameObjectAnimDirection.EGOD_Right;
-            }
-            else{
-                if(subY > 0){
-                    var angleY = cc.pAngle(cc.p(0, 1), cc.p(subX, subY));
-                    if(angleY < 0.52){
-                        //GameLog.c("### Face Top(R).");
-                        DirType = EGameObjectAnimDirection.EGOD_Top;
-                    }
-                    else{
-                        //GameLog.c("### Face Right Top.");
-                        DirType = EGameObjectAnimDirection.EGOD_RightTop;
-                    }
+
+        if(pt){
+            var subX = pt.x - this.getPosition().x;
+            var subY = pt.y - this.getPosition().y;
+            //! move to right
+            if(subX > 0){
+                this.flippedRootSpriteX(false);
+                var angleX = cc.pAngle(cc.p(1, 0), cc.p(subX, subY));
+                if(subY === 0 || angleX < 0.52){
+                    //GameLog.c("### Face Right.");
+                    DirType = EGameObjectAnimDirection.EGOD_Right;
                 }
                 else{
-                    var angle_Y = cc.pAngle(cc.p(0, -1), cc.p(subX, subY));
-                    if(angle_Y < 0.52){
-                        //GameLog.c("### Face Down(R).");
-                        DirType = EGameObjectAnimDirection.EGOD_Down;
+                    if(subY > 0){
+                        var angleY = cc.pAngle(cc.p(0, 1), cc.p(subX, subY));
+                        if(angleY < 0.52){
+                            //GameLog.c("### Face Top(R).");
+                            DirType = EGameObjectAnimDirection.EGOD_Top;
+                        }
+                        else{
+                            //GameLog.c("### Face Right Top.");
+                            DirType = EGameObjectAnimDirection.EGOD_RightTop;
+                        }
                     }
                     else{
-                        //GameLog.c("### Face Right Down.");
-                        DirType = EGameObjectAnimDirection.EGOD_RightDown;
+                        var angle_Y = cc.pAngle(cc.p(0, -1), cc.p(subX, subY));
+                        if(angle_Y < 0.52){
+                            //GameLog.c("### Face Down(R).");
+                            DirType = EGameObjectAnimDirection.EGOD_Down;
+                        }
+                        else{
+                            //GameLog.c("### Face Right Down.");
+                            DirType = EGameObjectAnimDirection.EGOD_RightDown;
+                        }
                     }
                 }
             }
-        }
-        else if(subX < 0){
-            this.flippedRootSpriteX(true);
-            var angle_X = cc.pAngle(cc.p(-1, 0), cc.p(subX, subY));
-            if(subY === 0 || angle_X < 0.52){
-                //GameLog.c("### Face Left.");
-                DirType = EGameObjectAnimDirection.EGOD_Left;
-            }
-            else{
-                if(subY > 0){
-                    var angleY = cc.pAngle(cc.p(0, 1), cc.p(subX, subY));
-                    if(angleY < 0.52){
-                        //GameLog.c("### Face Top(L).");
-                        DirType = EGameObjectAnimDirection.EGOD_Top;
-                    }
-                    else{
-                        //GameLog.c("### Face Left Top.");
-                        DirType = EGameObjectAnimDirection.EGOD_LeftTop;
-                    }
+            else if(subX < 0){
+                this.flippedRootSpriteX(true);
+                var angle_X = cc.pAngle(cc.p(-1, 0), cc.p(subX, subY));
+                if(subY === 0 || angle_X < 0.52){
+                    //GameLog.c("### Face Left.");
+                    DirType = EGameObjectAnimDirection.EGOD_Left;
                 }
                 else{
-                    var angle_Y = cc.pAngle(cc.p(0, -1), cc.p(subX, subY));
-                    if(angle_Y < 0.52){
-                        //GameLog.c("### Face Down(L).");
-                        DirType = EGameObjectAnimDirection.EGOD_Down;
+                    if(subY > 0){
+                        var angleY = cc.pAngle(cc.p(0, 1), cc.p(subX, subY));
+                        if(angleY < 0.52){
+                            //GameLog.c("### Face Top(L).");
+                            DirType = EGameObjectAnimDirection.EGOD_Top;
+                        }
+                        else{
+                            //GameLog.c("### Face Left Top.");
+                            DirType = EGameObjectAnimDirection.EGOD_LeftTop;
+                        }
                     }
                     else{
-                        //GameLog.c("### Face Left Down.");
-                        DirType = EGameObjectAnimDirection.EGOD_LeftDown;
+                        var angle_Y = cc.pAngle(cc.p(0, -1), cc.p(subX, subY));
+                        if(angle_Y < 0.52){
+                            //GameLog.c("### Face Down(L).");
+                            DirType = EGameObjectAnimDirection.EGOD_Down;
+                        }
+                        else{
+                            //GameLog.c("### Face Left Down.");
+                            DirType = EGameObjectAnimDirection.EGOD_LeftDown;
+                        }
                     }
                 }
             }
-        }
-        else{
-            this.flippedRootSpriteX(false);
-            if(subY > 0){
-                //GameLog.c("### move to Top.");
-                DirType = EGameObjectAnimDirection.EGOD_Top;
-            }
-            else if(subY < 0){
-                //GameLog.c("### move to Down.");
-                DirType = EGameObjectAnimDirection.EGOD_Down;
-            }
             else{
-                GameLog.c("### no need to move.");
+                this.flippedRootSpriteX(false);
+                if(subY > 0){
+                    //GameLog.c("### move to Top.");
+                    DirType = EGameObjectAnimDirection.EGOD_Top;
+                }
+                else if(subY < 0){
+                    //GameLog.c("### move to Down.");
+                    DirType = EGameObjectAnimDirection.EGOD_Down;
+                }
+                else{
+                    GameLog.c("### no need to move.");
+                }
             }
         }
 
@@ -493,5 +547,21 @@ var GameObjectBase = cc.Node.extend({
     init: function () {
         GameLog.c("GameObjectBase::init()");
         return true;
+    },
+
+    onEnter:function () {
+        this._super();
+
+        this.scheduleUpdate();
+    },
+
+    onExit: function(){
+        this._super();
+
+        this.unscheduleUpdate();
+    },
+
+    update:function(dt){
+        this._gameTimeDelta += dt;
     }
 })

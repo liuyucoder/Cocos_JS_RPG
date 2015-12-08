@@ -5,6 +5,9 @@
 var GameChar_Archer = CameCharacterBase.extend({
     _className: "GameChar_Archer",
 
+    _meleeCD: 4,
+    _enemyMeleeDis_Melee: 500,
+
     ctor:function(defLvl){
         this._super(defLvl);
     },

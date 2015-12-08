@@ -5,6 +5,9 @@
 var GameChar_Sorcerer = CameCharacterBase.extend({
     _className: "GameChar_Sorcerer",
 
+    _meleeCD: 4,
+    _enemyMeleeDis_Melee: 600,
+
     ctor:function(defLvl){
         this._super(defLvl);
     },
