@@ -304,7 +304,7 @@ var GameObjectBase = cc.Node.extend({
         return false;
     },
     canEngageMelee: function(){
-        if(this._eGameObjState === EGameObjectState.EGOS_Attack || (this._gameTimeDelta - this._lastMeleeTime) < this._meleeCD){
+        if(this._bForceMoveToPt || this._eGameObjState === EGameObjectState.EGOS_Attack || (this._gameTimeDelta - this._lastMeleeTime) < this._meleeCD){
             return false;
         }
         return true;

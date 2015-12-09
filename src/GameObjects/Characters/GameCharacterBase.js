@@ -222,6 +222,7 @@ var CameCharacterBase = GameObjectBase.extend({
                 animation.setDelayPerUnit(FrameInterval);
                 //animation.setRestoreOriginalFrame(bRestoreOriginalFrame == null ? true : bRestoreOriginalFrame);
                 animation.setRestoreOriginalFrame(false);
+                //animation.setLoops(2);
 
                 animate = cc.animate(animation);
             }

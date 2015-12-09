@@ -60,6 +60,8 @@ cc.game.onStart = function(){
     cc.view.setDesignResolutionSize(1024, 1024, cc.ResolutionPolicy.SHOW_ALL);
     // The game will be resized when browser size change
     cc.view.resizeWithBrowserSize(true);
+
+    cc.director.setAnimationInterval(1.0 / 30);
     //load resources
     cc.LoaderScene.preload(g_resources, function () {
         cc.director.runScene(new HelloWorldScene());
